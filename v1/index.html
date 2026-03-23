@@ -1,0 +1,2096 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Haven — AI Agents for Property Management</title>
+    <meta
+      name="description"
+      content="Haven gives property management teams superpowers with AI agents that handle calls, maintenance coordination, and leasing — inside your existing tools."
+    />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              midnight: "#2D2B2E",
+              surface: "#EDE8E3",
+              "surface-light": "#F6F2EE",
+              "surface-lighter": "#DDD7D0",
+              slate: "#7A7574",
+              "slate-light": "#4A4547",
+            },
+            fontFamily: {
+              display: ["Nunito", "system-ui", "sans-serif"],
+              body: ["Nunito", "system-ui", "sans-serif"],
+              mono: ['"Inter Variable"', "Inter", "system-ui", "sans-serif"],
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3/dist/ScrollTrigger.min.js"></script>
+    <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:ital,wght@0,200..1000;1,200..1000&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+      body {
+        font-family: "Nunito", system-ui, sans-serif;
+        background: #f6f2ee;
+        color: #4a4547;
+        overflow-x: hidden;
+      }
+
+      /* Reveal animations */
+      .reveal {
+        opacity: 0;
+        transform: translateY(32px);
+        transition:
+          opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .reveal.visible {
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .reveal-delay-1 {
+        transition-delay: 0.1s;
+      }
+      .reveal-delay-2 {
+        transition-delay: 0.2s;
+      }
+      .reveal-delay-3 {
+        transition-delay: 0.3s;
+      }
+      .reveal-delay-4 {
+        transition-delay: 0.4s;
+      }
+      .reveal-delay-5 {
+        transition-delay: 0.5s;
+      }
+
+      /* Scroll-reveal text — words light up as you scroll */
+      .scroll-text-wrap {
+        position: relative;
+      }
+      .scroll-text-word {
+        color: rgba(45, 43, 46, 0.12);
+        display: inline;
+      }
+
+      /* Hero text rotator */
+      .hero-rotate-text {
+        display: inline-block;
+        transition:
+          opacity 0.35s ease,
+          transform 0.35s ease;
+        opacity: 1;
+        transform: translateY(0);
+      }
+      .hero-rotate-text.out {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+
+      /* Hero video overlay — dark cinematic gradient */
+      .hero-video-overlay::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background:
+          linear-gradient(
+            180deg,
+            rgba(0, 0, 0, 0.5) 0%,
+            rgba(0, 0, 0, 0.15) 30%,
+            rgba(0, 0, 0, 0.25) 70%,
+            rgba(0, 0, 0, 0.6) 100%
+          ),
+          linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.55) 0%,
+            rgba(0, 0, 0, 0.3) 40%,
+            rgba(0, 0, 0, 0.05) 70%,
+            transparent 100%
+          );
+        z-index: 1;
+      }
+
+      /* Nav hero state — white text when over hero */
+      .nav-hero .nav-link {
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .nav-hero .nav-link:hover {
+        color: #fff;
+      }
+      .nav-hero .nav-logo path {
+        fill: #fff;
+        transition: fill 0.4s ease;
+      }
+      .nav-hero .nav-cta-login {
+        color: rgba(255, 255, 255, 0.75);
+      }
+      .nav-hero .nav-cta-login:hover {
+        color: #fff;
+      }
+      .nav-hero .nav-cta-btn {
+        background: rgba(255, 255, 255, 0.15);
+        backdrop-filter: blur(8px);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+      }
+      .nav-hero .nav-cta-btn:hover {
+        background: rgba(255, 255, 255, 0.25);
+      }
+      .nav-hero .nav-mobile-btn {
+        color: rgba(255, 255, 255, 0.8);
+      }
+
+      /* Nav scrolled state — warm background */
+      .nav-scrolled {
+        background: rgba(246, 242, 238, 0.92) !important;
+        border-bottom: 1px solid rgba(221, 215, 208, 0.8) !important;
+      }
+      .nav-scrolled .nav-logo path {
+        fill: #2d2b2e;
+        transition: fill 0.4s ease;
+      }
+      .nav-scrolled .nav-link {
+        color: #7a7574;
+      }
+      .nav-scrolled .nav-link:hover {
+        color: #2d2b2e;
+      }
+      .nav-scrolled .nav-cta-login {
+        color: #7a7574;
+      }
+      .nav-scrolled .nav-cta-login:hover {
+        color: #2d2b2e;
+      }
+      .nav-scrolled .nav-cta-btn {
+        background: #2d2b2e;
+        border: 1px solid #2d2b2e;
+      }
+      .nav-scrolled .nav-cta-btn:hover {
+        background: #4a4547;
+      }
+      .nav-scrolled .nav-mobile-btn {
+        color: #7a7574;
+      }
+
+      /* Snippet cards — dark frosted glass */
+      .snippet-card {
+        backdrop-filter: blur(20px) saturate(140%);
+        -webkit-backdrop-filter: blur(20px) saturate(140%);
+        background: rgba(0, 0, 0, 0.4);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        transform: translateY(16px) scale(0.97);
+        opacity: 0;
+        transition:
+          opacity 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+          transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+          box-shadow 0.6s ease;
+      }
+      .snippet-card.visible {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+        box-shadow:
+          0 8px 32px rgba(0, 0, 0, 0.2),
+          0 0 0 0.5px rgba(255, 255, 255, 0.06) inset;
+      }
+      .snippet-card.exiting {
+        opacity: 0;
+        transform: translateY(-12px) scale(0.95);
+        transition:
+          opacity 0.4s ease,
+          transform 0.4s ease;
+      }
+      /* Settled state — completed cards dim slightly */
+      .snippet-card.settled {
+        background: rgba(0, 0, 0, 0.3);
+        border-color: rgba(255, 255, 255, 0.05);
+      }
+
+      /* Snippet inner elements — staggered reveal */
+      .snippet-label,
+      .snippet-detail,
+      .snippet-bar-wrap {
+        opacity: 0;
+        transform: translateX(-6px);
+        transition:
+          opacity 0.35s ease,
+          transform 0.35s ease;
+      }
+      .snippet-card.visible .snippet-label {
+        opacity: 1;
+        transform: translateX(0);
+        transition-delay: 0.15s;
+      }
+      .snippet-card.visible .snippet-detail {
+        opacity: 1;
+        transform: translateX(0);
+        transition-delay: 0.3s;
+      }
+      .snippet-card.visible .snippet-bar-wrap {
+        opacity: 1;
+        transform: translateX(0);
+        transition-delay: 0.45s;
+      }
+
+      /* Snippet progress bar */
+      .snippet-progress {
+        width: 0%;
+        transition: width 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+      }
+      .snippet-progress.fill {
+        width: 100%;
+      }
+
+      /* Snippet status badge */
+      .snippet-status-badge {
+        opacity: 0;
+        transform: scale(0.8) translateY(2px);
+        transition:
+          opacity 0.3s ease,
+          transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      .snippet-status-badge.done {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+
+      /* Icon pulse on entry */
+      .snippet-icon {
+        transform: scale(0.6);
+        opacity: 0;
+        transition:
+          transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1),
+          opacity 0.3s ease;
+      }
+      .snippet-card.visible .snippet-icon {
+        transform: scale(1);
+        opacity: 1;
+        transition-delay: 0.05s;
+      }
+
+      /* Platform tab styles */
+      .platform-tab-bar {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .platform-tab-active .platform-tab-bar {
+        opacity: 1;
+      }
+      .platform-tab:not(.platform-tab-active) {
+        opacity: 0.55;
+      }
+      .platform-tab:hover {
+        opacity: 1 !important;
+      }
+      .platform-tab-active {
+        opacity: 1;
+        background: rgba(246, 242, 238, 0.3);
+      }
+
+      /* Platform panel transitions */
+      .platform-panel {
+        animation: panelFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .platform-panel.hidden {
+        display: none;
+      }
+      @keyframes panelFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Integration tabs */
+      .integration-tab {
+        opacity: 0.5;
+        transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+        cursor: pointer;
+        border-left: 2px solid transparent;
+      }
+      .integration-tab:hover {
+        opacity: 0.8;
+        background: rgba(37, 99, 235, 0.03);
+      }
+      .integration-tab-active {
+        opacity: 1 !important;
+        border-left-color: #2563EB !important;
+        background: rgba(37, 99, 235, 0.04) !important;
+      }
+      .integration-visual {
+        transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .integration-visual.switching {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      /* Testimonial — Harvey/Alven style */
+      .testimonial-portrait {
+        transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1), transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .testimonial-portrait.switching {
+        opacity: 0;
+        transform: scale(1.02);
+      }
+      .testimonial-content {
+        transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .testimonial-content.switching {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      .testimonial-dot {
+        width: 32px;
+        height: 3px;
+        border-radius: 2px;
+        background: #DDD7D0;
+        transition: background 0.3s ease, width 0.3s ease;
+        cursor: pointer;
+      }
+      .testimonial-dot:hover {
+        background: #B8B0A8;
+      }
+      .testimonial-dot-active {
+        background: #7C3AED !important;
+        width: 48px;
+      }
+
+      /* Agent card hover */
+      .agent-card {
+        position: relative;
+        overflow: hidden;
+      }
+
+      /* Metric counter animation */
+      @keyframes countUp {
+        from {
+          opacity: 0;
+          transform: translateY(8px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      /* Subtle horizontal rule */
+      .section-divider {
+        height: 1px;
+        background: linear-gradient(
+          90deg,
+          transparent,
+          rgba(45, 43, 46, 0.1),
+          transparent
+        );
+        border: none;
+      }
+
+      /* Nav blur */
+      .nav-blur {
+        backdrop-filter: blur(16px) saturate(180%);
+        -webkit-backdrop-filter: blur(16px) saturate(180%);
+      }
+
+      /* Scrollbar */
+      ::-webkit-scrollbar {
+        width: 6px;
+      }
+      ::-webkit-scrollbar-track {
+        background: #f6f2ee;
+      }
+      ::-webkit-scrollbar-thumb {
+        background: #d1cbc4;
+        border-radius: 3px;
+      }
+      ::-webkit-scrollbar-thumb:hover {
+        background: #b5afa8;
+      }
+    </style>
+  </head>
+  <body>
+    <!-- ===================== NAV ===================== -->
+    <nav
+      id="nav"
+      class="fixed top-0 left-0 right-0 z-50 nav-blur nav-hero transition-all duration-500"
+      style="background: transparent; border-bottom: 1px solid transparent"
+    >
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 lg:h-20">
+          <!-- Logo -->
+          <a href="#" class="flex items-center">
+            <svg
+              class="nav-logo"
+              height="32"
+              viewBox="0 0 214 65"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M58 33C58 49.0163 45.0163 62 29 62C12.9837 62 0 49.0163 0 33C0 16.9837 12.9837 4 29 4C45.0163 4 58 16.9837 58 33ZM21.8467 45.0833C21.8467 42.147 19.4663 39.7667 16.53 39.7667C13.5937 39.7667 11.2133 42.147 11.2133 45.0833C11.2133 48.0196 13.5937 50.4 16.53 50.4C19.4663 50.4 21.8467 48.0196 21.8467 45.0833ZM11.2133 32.9033C11.2133 29.967 13.5937 27.5867 16.53 27.5867C19.4663 27.5867 21.8467 29.967 21.8467 32.9033C21.8467 35.8396 19.4663 38.22 16.53 38.22C13.5937 38.22 11.2133 35.8396 11.2133 32.9033ZM21.8467 20.9167C21.8467 17.9804 19.4663 15.6 16.53 15.6C13.5937 15.6 11.2133 17.9804 11.2133 20.9167C11.2133 23.853 13.5937 26.2333 16.53 26.2333C19.4663 26.2333 21.8467 23.853 21.8467 20.9167ZM23.5867 29.0147C23.5867 28.0792 23.8335 27.1604 24.3021 26.3508C26.3499 22.8137 31.4567 22.8137 33.5045 26.3508C33.9732 27.1604 34.22 28.0792 34.22 29.0147V36.4795C34.22 37.6103 33.8594 38.7117 33.1907 39.6236C31.0664 42.5203 26.7402 42.5203 24.6159 39.6236C23.9472 38.7117 23.5867 37.6103 23.5867 36.4795V29.0147ZM45.82 20.9167C45.82 17.9804 43.4396 15.6 40.5033 15.6C37.567 15.6 35.1867 17.9804 35.1867 20.9167V24.3306C35.1867 25.5609 35.6133 26.7531 36.3939 27.704C38.5209 30.295 42.4858 30.295 44.6127 27.704C45.3933 26.7531 45.82 25.5609 45.82 24.3306V20.9167ZM35.1867 41.6477C35.1867 40.4306 35.6042 39.2504 36.3696 38.3042C38.4975 35.6733 42.5092 35.6733 44.6371 38.3042C45.4025 39.2504 45.82 40.4306 45.82 41.6477V45.0833C45.82 48.0196 43.4396 50.4 40.5033 50.4C37.567 50.4 35.1867 48.0196 35.1867 45.0833V41.6477Z"
+                fill="#fff"
+              />
+              <path
+                d="M77.152 48.432C75.936 48.432 75.008 48.096 74.368 47.424C73.728 46.752 73.408 45.808 73.408 44.592V17.568C73.408 16.352 73.728 15.408 74.368 14.736C75.008 14.064 75.936 13.728 77.152 13.728C78.336 13.728 79.248 14.064 79.888 14.736C80.528 15.408 80.848 16.352 80.848 17.568V27.744H96.592V17.568C96.592 16.352 96.912 15.408 97.552 14.736C98.192 14.064 99.104 13.728 100.288 13.728C101.504 13.728 102.432 14.064 103.072 14.736C103.712 15.408 104.032 16.352 104.032 17.568V44.592C104.032 45.808 103.712 46.752 103.072 47.424C102.432 48.096 101.504 48.432 100.288 48.432C99.104 48.432 98.192 48.096 97.552 47.424C96.912 46.752 96.592 45.808 96.592 44.592V33.936H80.848V44.592C80.848 45.808 80.528 46.752 79.888 47.424C79.28 48.096 78.368 48.432 77.152 48.432ZM118.205 48.528C116.477 48.528 114.925 48.192 113.549 47.52C112.173 46.848 111.101 45.936 110.333 44.784C109.565 43.632 109.181 42.336 109.181 40.896C109.181 39.168 109.629 37.808 110.525 36.816C111.421 35.792 112.877 35.072 114.893 34.656C116.909 34.208 119.581 33.984 122.909 33.984H125.453V37.728H122.957C121.325 37.728 119.997 37.824 118.973 38.016C117.981 38.176 117.261 38.464 116.813 38.88C116.397 39.296 116.189 39.872 116.189 40.608C116.189 41.504 116.493 42.24 117.101 42.816C117.741 43.392 118.653 43.68 119.837 43.68C120.765 43.68 121.581 43.472 122.285 43.056C123.021 42.608 123.597 42.016 124.013 41.28C124.429 40.512 124.637 39.648 124.637 38.688V33.168C124.637 31.76 124.317 30.768 123.677 30.192C123.037 29.584 121.949 29.28 120.413 29.28C119.549 29.28 118.605 29.392 117.581 29.616C116.589 29.808 115.485 30.144 114.269 30.624C113.565 30.944 112.941 31.024 112.397 30.864C111.853 30.672 111.437 30.352 111.149 29.904C110.861 29.424 110.717 28.912 110.717 28.368C110.717 27.792 110.877 27.248 111.197 26.736C111.517 26.192 112.045 25.792 112.781 25.536C114.285 24.928 115.693 24.512 117.005 24.288C118.349 24.064 119.581 23.952 120.701 23.952C123.165 23.952 125.181 24.32 126.749 25.056C128.349 25.76 129.549 26.864 130.349 28.368C131.149 29.84 131.549 31.744 131.549 34.08V44.736C131.549 45.92 131.261 46.832 130.685 47.472C130.109 48.112 129.277 48.432 128.189 48.432C127.101 48.432 126.253 48.112 125.645 47.472C125.069 46.832 124.781 45.92 124.781 44.736V42.96L125.117 43.248C124.925 44.336 124.509 45.28 123.869 46.08C123.261 46.848 122.477 47.456 121.517 47.904C120.557 48.32 119.453 48.528 118.205 48.528ZM146.706 48.432C145.778 48.432 144.962 48.192 144.258 47.712C143.554 47.2 142.994 46.448 142.578 45.456L135.33 28.752C134.978 27.92 134.85 27.152 134.946 26.448C135.042 25.712 135.378 25.136 135.954 24.72C136.562 24.272 137.394 24.048 138.45 24.048C139.314 24.048 140.018 24.256 140.562 24.672C141.106 25.056 141.586 25.808 142.002 26.928L147.666 41.328H146.13L152.034 26.88C152.482 25.792 152.978 25.056 153.522 24.672C154.066 24.256 154.818 24.048 155.778 24.048C156.61 24.048 157.266 24.272 157.746 24.72C158.258 25.136 158.562 25.696 158.658 26.4C158.786 27.104 158.658 27.872 158.274 28.704L150.882 45.456C150.466 46.48 149.906 47.232 149.202 47.712C148.53 48.192 147.698 48.432 146.706 48.432ZM174.04 48.528C171.256 48.528 168.856 48.032 166.84 47.04C164.856 46.016 163.32 44.592 162.232 42.768C161.176 40.912 160.648 38.736 160.648 36.24C160.648 33.808 161.16 31.68 162.184 29.856C163.208 28 164.632 26.56 166.456 25.536C168.312 24.48 170.408 23.952 172.744 23.952C174.44 23.952 175.976 24.24 177.352 24.816C178.728 25.36 179.912 26.16 180.904 27.216C181.896 28.24 182.648 29.504 183.16 31.008C183.672 32.48 183.928 34.128 183.928 35.952C183.928 36.56 183.736 37.024 183.352 37.344C182.968 37.632 182.408 37.776 181.672 37.776H166.6V34.032H178.696L177.928 34.704C177.928 33.392 177.736 32.304 177.352 31.44C176.968 30.544 176.408 29.872 175.672 29.424C174.968 28.976 174.088 28.752 173.032 28.752C171.848 28.752 170.84 29.024 170.008 29.568C169.176 30.112 168.536 30.896 168.088 31.92C167.64 32.944 167.416 34.176 167.416 35.616V36C167.416 38.432 167.976 40.224 169.096 41.376C170.248 42.528 171.944 43.104 174.184 43.104C174.952 43.104 175.832 43.008 176.824 42.816C177.816 42.624 178.744 42.32 179.608 41.904C180.344 41.552 181 41.44 181.576 41.568C182.152 41.664 182.6 41.92 182.92 42.336C183.24 42.752 183.416 43.232 183.448 43.776C183.512 44.32 183.4 44.864 183.112 45.408C182.824 45.92 182.344 46.352 181.672 46.704C180.584 47.312 179.352 47.76 177.976 48.048C176.632 48.368 175.32 48.528 174.04 48.528ZM191.791 48.432C190.607 48.432 189.695 48.112 189.055 47.472C188.447 46.832 188.143 45.92 188.143 44.736V27.696C188.143 26.512 188.447 25.616 189.055 25.008C189.695 24.368 190.575 24.048 191.695 24.048C192.847 24.048 193.727 24.368 194.335 25.008C194.943 25.616 195.247 26.512 195.247 27.696V30.432L194.719 28.848C195.455 27.28 196.543 26.08 197.983 25.248C199.455 24.384 201.119 23.952 202.975 23.952C204.863 23.952 206.415 24.32 207.631 25.056C208.847 25.76 209.759 26.848 210.367 28.32C210.975 29.76 211.279 31.6 211.279 33.84V44.736C211.279 45.92 210.959 46.832 210.319 47.472C209.711 48.112 208.815 48.432 207.631 48.432C206.479 48.432 205.583 48.112 204.943 47.472C204.335 46.832 204.031 45.92 204.031 44.736V34.176C204.031 32.544 203.727 31.376 203.119 30.672C202.543 29.936 201.647 29.568 200.431 29.568C198.895 29.568 197.663 30.048 196.735 31.008C195.839 31.968 195.391 33.248 195.391 34.848V44.736C195.391 47.2 194.191 48.432 191.791 48.432Z"
+                fill="#fff"
+              />
+            </svg>
+          </a>
+
+          <!-- Desktop links -->
+          <div class="hidden md:flex items-center gap-8">
+            <a
+              href="#agents"
+              class="nav-link text-sm transition-colors duration-300"
+              >Agents</a
+            >
+            <a
+              href="#how-it-works"
+              class="nav-link text-sm transition-colors duration-300"
+              >Platform</
+            >
+            <a
+              href="#results"
+              class="nav-link text-sm transition-colors duration-300"
+              >Results</a
+            >
+            <a
+              href="#integrations"
+              class="nav-link text-sm transition-colors duration-300"
+              >Integrations</a
+            >
+          </div>
+
+          <!-- CTA -->
+          <div class="flex items-center gap-4">
+            <a
+              href="#demo"
+              class="nav-cta-login hidden sm:inline-flex text-sm transition-colors duration-300"
+              >Log in</a
+            >
+            <a
+              href="#demo"
+              class="nav-cta-btn inline-flex items-center gap-2 px-5 py-2.5 rounded-full text-white text-sm font-semibold transition-all duration-300"
+            >
+              Book a Demo
+              <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                <path
+                  d="M5.25 3.5L8.75 7L5.25 10.5"
+                  stroke="currentColor"
+                  stroke-width="1.5"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Mobile menu button -->
+          <button
+            id="mobile-menu-btn"
+            class="nav-mobile-btn md:hidden p-2"
+            aria-label="Menu"
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path
+                d="M3 6H17M3 10H17M3 14H17"
+                stroke="currentColor"
+                stroke-width="1.5"
+                stroke-linecap="round"
+              />
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="md:hidden hidden border-t border-white/10">
+        <div class="px-6 py-4 space-y-3 bg-black/40 nav-blur">
+          <a href="#agents" class="nav-link block text-sm transition-colors"
+            >Agents</a
+          >
+          <a
+            href="#how-it-works"
+            class="nav-link block text-sm transition-colors"
+            >How It Works</a
+          >
+          <a href="#results" class="nav-link block text-sm transition-colors"
+            >Results</a
+          >
+          <a href="#integrations" class="nav-link block text-sm transition-colors"
+            >Integrations</a
+          >
+        </div>
+      </div>
+    </nav>
+
+    <!-- ===================== HERO ===================== -->
+    <section id="hero" class="relative w-full min-h-screen overflow-hidden">
+      <!-- Background video -->
+      <video
+        class="absolute inset-0 w-full h-full object-cover"
+        src="assets/hero vid.mp4"
+        autoplay
+        muted
+        loop
+        playsinline
+      ></video>
+
+      <!-- Dark cinematic overlay -->
+      <div class="absolute inset-0 hero-video-overlay"></div>
+
+      <!-- Content layer — pinned to bottom -->
+      <div class="relative z-10 flex items-end h-full min-h-screen">
+        <div
+          class="max-w-7xl mx-auto px-6 lg:px-8 w-full pb-16 sm:pb-20 lg:pb-24"
+        >
+          <div class="flex items-end justify-between gap-12 lg:gap-16">
+            <!-- Bottom-left: Headline + CTA -->
+            <div class="max-w-xl">
+              <h1
+                class="reveal text-5xl sm:text-6xl lg:text-7xl text-white leading-[1.1] tracking-tight mb-8 font-bold text-balance"
+              >
+                Delegate<br />
+                <span
+                  id="hero-rotator"
+                  class="hero-rotate-text italic text-violet-300"
+                ></span>
+              </h1>
+
+              <div
+                class="reveal reveal-delay-1 flex flex-wrap items-center gap-3"
+              >
+                <a
+                  href="#demo"
+                  class="inline-flex items-center gap-2.5 px-8 py-3.5 rounded-full bg-white text-midnight font-semibold hover:bg-white/90 transition-all duration-300 shadow-lg shadow-black/20"
+                >
+                  Book a Demo
+                  <svg width="15" height="15" viewBox="0 0 16 16" fill="none">
+                    <path
+                      d="M6 4L10 8L6 12"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                    />
+                  </svg>
+                </a>
+                <a
+                  href="#agents"
+                  class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border border-white/20 bg-white/10 backdrop-blur-sm text-white font-medium hover:bg-white/15 hover:border-white/30 transition-all duration-300"
+                >
+                  How It Works
+                </a>
+              </div>
+            </div>
+
+            <!-- Bottom-right: Snippet feed -->
+            <div
+              class="reveal reveal-delay-2 hidden lg:block flex-shrink-0 w-80 pb-1"
+            >
+              <div id="snippet-feed" class="flex flex-col gap-2.5">
+                <!-- Snippets are injected by JS -->
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scroll indicator -->
+      <div
+        class="absolute bottom-6 left-1/2 -translate-x-1/2 z-10 reveal reveal-delay-3"
+      >
+        <div
+          class="w-5 h-8 rounded-full border border-white/20 flex items-start justify-center p-1"
+        >
+          <div class="w-1 h-2 rounded-full bg-white/40 animate-bounce"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== PROBLEM ===================== -->
+    <section class="relative" style="padding: 20vh 0">
+      <div class="max-w-4xl mx-auto px-6 lg:px-8">
+        <div
+          id="scroll-text"
+          class="scroll-text-wrap text-3xl sm:text-4xl lg:text-5xl leading-snug sm:leading-snug lg:leading-snug font-bold text-center text-balance"
+        >
+          Your portfolio grew. Your team didn't. Every missed call is a missed
+          opportunity. Every delayed work order is a frustrated resident. The
+          math doesn't work when your team is stretched across hundreds of units
+          with the same tools they had at fifty.
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== AGENTS ===================== -->
+    <section id="agents" class="py-24 sm:py-32 relative">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <!-- Section header — left-aligned, no scroll interaction -->
+        <div class="max-w-2xl mb-20 reveal">
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance">
+            Three agents.<br>Every channel covered.
+          </h2>
+          <p class="text-lg text-slate leading-relaxed">
+            Each agent is purpose-built for a specific operational domain — working across voice, SMS, email, and web. They follow your SOPs, not a generic script.
+          </p>
+        </div>
+
+        <!-- Agent rows — alternating layout -->
+        <div class="space-y-20 lg:space-y-28">
+
+          <!-- Row 1: Card LEFT, Text RIGHT -->
+          <div class="reveal grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <!-- UI Card -->
+            <div class="rounded-[28px] p-8 sm:p-10 lg:p-12" style="background: #F0ECFE;">
+              <div class="bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] p-5 sm:p-6">
+                <!-- Call log header -->
+                <div class="flex items-center justify-between mb-5">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-violet-100 flex items-center justify-center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4C3 3.67 3.01 3.34 3.03 3.02C3.07 2.44 3.52 2 4.08 2H7.08"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-midnight">Inbound Call</p>
+                      <p class="text-[11px] text-slate">Just now</p>
+                    </div>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-semibold">
+                    <svg width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 6.5L5 9L9.5 3.5"/></svg>
+                    Routed
+                  </span>
+                </div>
+                <!-- Call details -->
+                <div class="space-y-3">
+                  <div class="flex items-center justify-between py-2.5 border-b border-surface-lighter/80">
+                    <span class="text-xs text-slate font-medium">Caller</span>
+                    <span class="text-sm text-midnight font-semibold">Maria Chen</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2.5 border-b border-surface-lighter/80">
+                    <span class="text-xs text-slate font-medium">Property</span>
+                    <span class="text-sm text-midnight">Oakridge Apartments, Unit 4B</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2.5">
+                    <span class="text-xs text-slate font-medium">Issue</span>
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full bg-violet-50 text-violet-600 text-xs font-medium">Maintenance Request</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Text -->
+            <div>
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-50 text-violet-600 text-xs font-semibold tracking-wide uppercase mb-6">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4"/></svg>
+                Frontline Receptionist
+              </span>
+              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4 text-balance">
+                Every call answered.<br>Every caller helped.
+              </h3>
+              <p class="text-slate leading-relaxed mb-6 text-pretty">
+                Answers every inbound call — day or night. Triages by urgency, captures structured data, and logs it directly into your PMS. No more voicemail black holes.
+              </p>
+              <div class="space-y-3">
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">24/7 natural conversation — no hold music, no menus</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">Smart routing by property, urgency, and issue type</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">Escalation with full context — never a cold handoff</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 2: Text LEFT, Card RIGHT -->
+          <div class="reveal grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <!-- Text -->
+            <div class="lg:order-1">
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold tracking-wide uppercase mb-6">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                Maintenance Coordinator
+              </span>
+              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4 text-balance">
+                Work orders that<br>actually close.
+              </h3>
+              <p class="text-slate leading-relaxed mb-6 text-pretty">
+                Reads work orders from your PMS, contacts residents and vendors, schedules appointments, and keeps everyone updated — without your team lifting a finger.
+              </p>
+              <div class="space-y-3">
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">Automated vendor dispatch and scheduling</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">Resident updates at every stage — no more "any update?" calls</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">Priority escalation for emergencies — pipes, locks, HVAC</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- UI Card -->
+            <div class="lg:order-2 rounded-[28px] p-8 sm:p-10 lg:p-12" style="background: #FEF3E2;">
+              <div class="bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] p-5 sm:p-6">
+                <!-- Work order header -->
+                <div class="flex items-center justify-between mb-5">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-midnight">Work Order #1847</p>
+                      <p class="text-[11px] text-slate">Created 2h ago</p>
+                    </div>
+                  </div>
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-semibold">In Progress</span>
+                </div>
+                <!-- Work order details -->
+                <div class="space-y-3 mb-5">
+                  <div class="flex items-center justify-between py-2.5 border-b border-surface-lighter/80">
+                    <span class="text-xs text-slate font-medium">Tenant</span>
+                    <span class="text-sm text-midnight font-semibold">James Rivera</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2.5 border-b border-surface-lighter/80">
+                    <span class="text-xs text-slate font-medium">Issue</span>
+                    <span class="text-sm text-midnight">Heating unit not working</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2.5 border-b border-surface-lighter/80">
+                    <span class="text-xs text-slate font-medium">Vendor</span>
+                    <span class="text-sm text-midnight">ProTemp HVAC Services</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2.5">
+                    <span class="text-xs text-slate font-medium">Appointment</span>
+                    <span class="text-sm text-midnight font-semibold">Thu 2:00 PM — Confirmed</span>
+                  </div>
+                </div>
+                <!-- Progress tracker -->
+                <div class="flex items-center gap-0">
+                  <div class="flex-1 text-center">
+                    <div class="w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center mx-auto mb-1.5">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 6.5L5 9L9.5 3.5"/></svg>
+                    </div>
+                    <span class="text-[10px] text-amber-700 font-semibold">Reported</span>
+                  </div>
+                  <div class="flex-shrink-0 w-8 h-0.5 bg-amber-400 -mt-4"></div>
+                  <div class="flex-1 text-center">
+                    <div class="w-7 h-7 rounded-full bg-amber-500 text-white flex items-center justify-center mx-auto mb-1.5">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 6.5L5 9L9.5 3.5"/></svg>
+                    </div>
+                    <span class="text-[10px] text-amber-700 font-semibold">Assigned</span>
+                  </div>
+                  <div class="flex-shrink-0 w-8 h-0.5 bg-amber-400 -mt-4"></div>
+                  <div class="flex-1 text-center">
+                    <div class="w-7 h-7 rounded-full bg-amber-500 ring-4 ring-amber-200/50 text-white flex items-center justify-center mx-auto mb-1.5">
+                      <div class="w-2 h-2 rounded-full bg-white"></div>
+                    </div>
+                    <span class="text-[10px] text-amber-700 font-bold">Scheduled</span>
+                  </div>
+                  <div class="flex-shrink-0 w-8 h-0.5 bg-surface-lighter -mt-4"></div>
+                  <div class="flex-1 text-center">
+                    <div class="w-7 h-7 rounded-full bg-surface-lighter flex items-center justify-center mx-auto mb-1.5"></div>
+                    <span class="text-[10px] text-slate font-medium">Complete</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Row 3: Card LEFT, Text RIGHT -->
+          <div class="reveal grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
+            <!-- UI Card -->
+            <div class="rounded-[28px] p-8 sm:p-10 lg:p-12" style="background: #E8F5F0;">
+              <div class="bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] p-5 sm:p-6">
+                <!-- Lead thread header -->
+                <div class="flex items-center justify-between mb-5">
+                  <div class="flex items-center gap-3">
+                    <div class="w-9 h-9 rounded-full bg-emerald-100 flex items-center justify-center">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9L12 2L21 9V20C21 20.55 20.55 21 20 21H4C3.45 21 3 20.55 3 20V9Z"/><path d="M9 21V12H15V21"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-midnight">Lead Follow-up</p>
+                      <p class="text-[11px] text-slate">12 min ago</p>
+                    </div>
+                  </div>
+                  <span class="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-blue-600 text-[11px] font-semibold">Awaiting Confirmation</span>
+                </div>
+                <!-- Thread -->
+                <div class="space-y-3 mb-4">
+                  <div class="flex items-center justify-between py-2.5 border-b border-surface-lighter/80">
+                    <span class="text-xs text-slate font-medium">Lead</span>
+                    <span class="text-sm text-midnight font-semibold">Priya Patel</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2.5 border-b border-surface-lighter/80">
+                    <span class="text-xs text-slate font-medium">Inquiry</span>
+                    <span class="text-sm text-midnight">2BR availability + pet policy</span>
+                  </div>
+                  <div class="flex items-center justify-between py-2.5 border-b border-surface-lighter/80">
+                    <span class="text-xs text-slate font-medium">AI Reply</span>
+                    <span class="inline-flex items-center gap-1 text-sm text-emerald-600 font-medium">
+                      <svg width="12" height="12" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M2.5 6.5L5 9L9.5 3.5"/></svg>
+                      Sent — 48s response
+                    </span>
+                  </div>
+                  <div class="flex items-center justify-between py-2.5">
+                    <span class="text-xs text-slate font-medium">Tour Booked</span>
+                    <span class="text-sm text-midnight font-semibold">Friday 11:00 AM</span>
+                  </div>
+                </div>
+                <!-- AI message preview -->
+                <div class="rounded-xl bg-surface-light/60 p-3.5">
+                  <p class="text-xs text-slate-light leading-relaxed italic">"Hi Priya! We have three 2BR units available starting next month. We're pet-friendly — cats and dogs welcome with a one-time deposit. I've booked you a tour for Friday at 11am. See you then!"</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Text -->
+            <div>
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold tracking-wide uppercase mb-6">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9L12 2L21 9V20C21 20.55 20.55 21 20 21H4C3.45 21 3 20.55 3 20V9Z"/><path d="M9 21V12H15V21"/></svg>
+                Leasing Agent
+              </span>
+              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4 text-balance">
+                Every lead gets<br>a personal reply.
+              </h3>
+              <p class="text-slate leading-relaxed mb-6 text-pretty">
+                Responds to every inquiry in under 60 seconds — answering questions, sharing availability, and booking tours. Your pipeline stays warm while your team focuses on closings.
+              </p>
+              <div class="space-y-3">
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">Sub-60-second response to every new lead</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">Knows your floorplans, pricing, pet policies, move-in specials</span>
+                </div>
+                <div class="flex items-start gap-3">
+                  <svg width="18" height="18" viewBox="0 0 18 18" fill="none" class="mt-0.5 shrink-0"><path d="M3.75 9L7.5 12.75L14.25 5.25" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                  <span class="text-sm text-slate-light">Self-serve tour scheduling synced to your calendar</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <hr class="section-divider max-w-7xl mx-auto" />
+
+    <!-- ===================== PLATFORM OVERVIEW ===================== -->
+    <section id="how-it-works" class="py-24 sm:py-32 relative">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <!-- Header -->
+        <div class="max-w-2xl mb-16 reveal">
+          <p class="text-xs uppercase tracking-widest text-violet-600 mb-4 font-semibold">Platform Overview</p>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance">
+            One platform.<br>Every workflow covered.
+          </h2>
+          <p class="text-lg text-slate leading-relaxed text-pretty">
+            Haven is a suite of AI agents that plug directly into your property management software, follow your SOPs, and work across every channel — so nothing falls through the cracks.
+          </p>
+        </div>
+
+        <!-- Tabbed UI Showcase -->
+        <div class="reveal">
+          <!-- UI Preview Area -->
+          <div class="rounded-t-[24px] border border-b-0 border-surface-lighter bg-white p-6 sm:p-8 lg:p-10 min-h-[360px] sm:min-h-[420px] relative overflow-hidden">
+
+            <!-- Tab 0: Shared Context — Activity Timeline -->
+            <div id="platform-panel-0" class="platform-panel">
+              <div class="max-w-2xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+                    </div>
+                    <span class="text-sm font-semibold text-midnight">Shared Activity Feed</span>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-semibold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Live
+                  </span>
+                </div>
+                <div class="space-y-3">
+                  <!-- Entry 1 -->
+                  <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Receptionist</span>
+                        <span class="text-[10px] text-slate">Just now</span>
+                      </div>
+                      <p class="text-xs text-slate-light leading-relaxed">Inbound call from Maria Chen re: Unit 4B — water leak in kitchen. Flagged urgent, created work order <span class="font-semibold text-midnight">#1847</span>, routed to maintenance.</p>
+                    </div>
+                  </div>
+                  <!-- Entry 2 -->
+                  <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Maintenance</span>
+                        <span class="text-[10px] text-slate">2 min ago</span>
+                      </div>
+                      <p class="text-xs text-slate-light leading-relaxed">Picked up WO <span class="font-semibold text-midnight">#1847</span>. Dispatched Ace Plumbing, confirmed appointment Thu 2:00 PM. SMS sent to tenant with ETA.</p>
+                    </div>
+                  </div>
+                  <!-- Entry 3 -->
+                  <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9L12 2L21 9V20C21 20.55 20.55 21 20 21H4C3.45 21 3 20.55 3 20V9Z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Leasing</span>
+                        <span class="text-[10px] text-slate">5 min ago</span>
+                      </div>
+                      <p class="text-xs text-slate-light leading-relaxed">New lead: Priya Patel inquiring about 2BR availability. Replied in 48s, answered pet policy question, booked tour for Friday 11 AM.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 1: Every Channel — Multichannel Inbox -->
+            <div id="platform-panel-1" class="platform-panel hidden">
+              <div class="max-w-2xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                    </div>
+                    <span class="text-sm font-semibold text-midnight">Unified Inbox</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-semibold">12 active</span>
+                  </div>
+                </div>
+                <div class="space-y-2.5">
+                  <!-- Voice -->
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">James Rivera</span>
+                        <span class="px-1.5 py-0.5 rounded bg-violet-50 text-violet-600 text-[9px] font-bold uppercase">Voice</span>
+                      </div>
+                      <p class="text-[11px] text-slate truncate">"Hi, I'm calling about the heating in my unit..."</p>
+                    </div>
+                    <span class="text-[10px] text-slate shrink-0">3m ago</span>
+                  </div>
+                  <!-- SMS -->
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Maria Chen</span>
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase">SMS</span>
+                      </div>
+                      <p class="text-[11px] text-slate truncate">"Thanks for the update! Will someone be there between 2-4?"</p>
+                    </div>
+                    <span class="text-[10px] text-slate shrink-0">8m ago</span>
+                  </div>
+                  <!-- Email -->
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Priya Patel</span>
+                        <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[9px] font-bold uppercase">Email</span>
+                      </div>
+                      <p class="text-[11px] text-slate truncate">Re: Tour Confirmation — "Looking forward to Friday! Quick question about parking..."</p>
+                    </div>
+                    <span class="text-[10px] text-slate shrink-0">22m ago</span>
+                  </div>
+                  <!-- Web -->
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">David Park</span>
+                        <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[9px] font-bold uppercase">Web</span>
+                      </div>
+                      <p class="text-[11px] text-slate truncate">"What's the pet deposit for a dog under 50 lbs?"</p>
+                    </div>
+                    <span class="text-[10px] text-slate shrink-0">34m ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2: SOPs — Rules Config -->
+            <div id="platform-panel-2" class="platform-panel hidden">
+              <div class="max-w-2xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+                    </div>
+                    <span class="text-sm font-semibold text-midnight">SOP Configuration</span>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-semibold">4 rules active</span>
+                </div>
+                <div class="space-y-2.5">
+                  <!-- Rule 1 -->
+                  <div class="p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                        <span class="text-xs font-semibold text-midnight">Emergency Escalation</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">Active</span>
+                    </div>
+                    <p class="text-[11px] text-slate leading-relaxed">If issue contains <span class="px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-mono text-[10px]">flood</span> <span class="px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-mono text-[10px]">fire</span> <span class="px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-mono text-[10px]">gas leak</span> → Immediately call on-site manager + notify property owner</p>
+                  </div>
+                  <!-- Rule 2 -->
+                  <div class="p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-amber-400"></div>
+                        <span class="text-xs font-semibold text-midnight">After-Hours Routing</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">Active</span>
+                    </div>
+                    <p class="text-[11px] text-slate leading-relaxed">Between <span class="font-semibold text-midnight">6 PM–8 AM</span>: Log all non-urgent calls, send summary to team at 8 AM. Urgent calls → escalate per emergency rule.</p>
+                  </div>
+                  <!-- Rule 3 -->
+                  <div class="p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+                        <span class="text-xs font-semibold text-midnight">Lead Response SLA</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">Active</span>
+                    </div>
+                    <p class="text-[11px] text-slate leading-relaxed">Respond to all new leads within <span class="font-semibold text-midnight">60 seconds</span>. If no AI reply after 2 min → alert leasing team via SMS.</p>
+                  </div>
+                  <!-- Rule 4 -->
+                  <div class="p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-violet-400"></div>
+                        <span class="text-xs font-semibold text-midnight">Vendor Spend Approval</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">Active</span>
+                    </div>
+                    <p class="text-[11px] text-slate leading-relaxed">Work orders over <span class="font-semibold text-midnight">$500</span> require manager approval before vendor dispatch. Under $500 → auto-dispatch.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 3: Human-in-the-Loop — Handoff -->
+            <div id="platform-panel-3" class="platform-panel hidden">
+              <div class="max-w-2xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+                    </div>
+                    <span class="text-sm font-semibold text-midnight">Escalation Handoff</span>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 text-[11px] font-semibold">Needs Review</span>
+                </div>
+                <!-- Handoff card -->
+                <div class="rounded-xl border-2 border-rose-200 bg-rose-50/30 p-5 mb-4">
+                  <div class="flex items-start gap-3 mb-4">
+                    <div class="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-midnight mb-1">Tenant requesting lease break — needs human judgment</p>
+                      <p class="text-xs text-slate leading-relaxed">Unit 8C tenant David Park is requesting an early lease termination due to job relocation. Lease has 7 months remaining. This requires manager review per your SOP.</p>
+                    </div>
+                  </div>
+                  <div class="border-t border-rose-200 pt-3">
+                    <p class="text-[10px] uppercase tracking-widest text-slate font-semibold mb-2">Context provided</p>
+                    <div class="grid grid-cols-2 gap-2">
+                      <div class="px-3 py-2 rounded-lg bg-white text-[11px]">
+                        <span class="text-slate">Tenant since</span>
+                        <span class="block text-midnight font-semibold">March 2024</span>
+                      </div>
+                      <div class="px-3 py-2 rounded-lg bg-white text-[11px]">
+                        <span class="text-slate">Rent status</span>
+                        <span class="block text-emerald-600 font-semibold">Always on time</span>
+                      </div>
+                      <div class="px-3 py-2 rounded-lg bg-white text-[11px]">
+                        <span class="text-slate">Remaining lease</span>
+                        <span class="block text-midnight font-semibold">7 months</span>
+                      </div>
+                      <div class="px-3 py-2 rounded-lg bg-white text-[11px]">
+                        <span class="text-slate">Early term. fee</span>
+                        <span class="block text-midnight font-semibold">2 months rent</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-px bg-surface-lighter"></div>
+                  <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-light border border-surface-lighter">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <span class="text-[10px] font-semibold text-slate-light">Handed off to Sarah R. — Property Manager</span>
+                  </div>
+                  <div class="flex-1 h-px bg-surface-lighter"></div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Tab Selector Row -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 border border-surface-lighter rounded-b-[24px] overflow-hidden bg-white">
+
+            <!-- Tab 0 -->
+            <button onclick="switchPlatformTab(0)" id="platform-tab-0" class="platform-tab platform-tab-active text-left p-5 sm:p-6 border-r border-surface-lighter/60 relative transition-colors duration-300 hover:bg-surface-light/30">
+              <div class="absolute top-0 left-0 w-full h-[3px] platform-tab-bar bg-violet-500"></div>
+              <div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+              </div>
+              <h4 class="text-sm font-bold text-midnight mb-1">Agents that share context</h4>
+              <p class="text-[11px] text-slate leading-relaxed">Information moves with the workflow, not stuck in silos.</p>
+            </button>
+
+            <!-- Tab 1 -->
+            <button onclick="switchPlatformTab(1)" id="platform-tab-1" class="platform-tab text-left p-5 sm:p-6 border-r border-surface-lighter/60 relative transition-colors duration-300 hover:bg-surface-light/30">
+              <div class="absolute top-0 left-0 w-full h-[3px] platform-tab-bar bg-blue-500"></div>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4"/><path d="M15 2h6v6"/></svg>
+              </div>
+              <h4 class="text-sm font-bold text-midnight mb-1">Every channel</h4>
+              <p class="text-[11px] text-slate leading-relaxed">Voice, SMS, email, and web — all in one place.</p>
+            </button>
+
+            <!-- Tab 2 -->
+            <button onclick="switchPlatformTab(2)" id="platform-tab-2" class="platform-tab text-left p-5 sm:p-6 border-r border-surface-lighter/60 relative transition-colors duration-300 hover:bg-surface-light/30 border-t lg:border-t-0 border-surface-lighter/60">
+              <div class="absolute top-0 left-0 w-full h-[3px] platform-tab-bar bg-amber-500"></div>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+              </div>
+              <h4 class="text-sm font-bold text-midnight mb-1">Your SOPs</h4>
+              <p class="text-[11px] text-slate leading-relaxed">Your rules, SLAs, and escalation paths — enforced.</p>
+            </button>
+
+            <!-- Tab 3 -->
+            <button onclick="switchPlatformTab(3)" id="platform-tab-3" class="platform-tab text-left p-5 sm:p-6 relative transition-colors duration-300 hover:bg-surface-light/30 border-t lg:border-t-0 border-surface-lighter/60">
+              <div class="absolute top-0 left-0 w-full h-[3px] platform-tab-bar bg-emerald-500"></div>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+              </div>
+              <h4 class="text-sm font-bold text-midnight mb-1">Human-in-the-loop</h4>
+              <p class="text-[11px] text-slate leading-relaxed">AI handles legwork, humans handle judgment.</p>
+            </button>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== RESULTS ===================== -->
+    <section id="results" class="py-24 sm:py-32 relative">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="max-w-2xl mb-16 reveal">
+          <p class="text-xs uppercase tracking-widest text-rose-500 mb-4 font-semibold">Results</p>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance">
+            Proven results with teams like yours.
+          </h2>
+        </div>
+
+        <!-- Metrics Row -->
+        <div class="reveal grid grid-cols-2 lg:grid-cols-4 gap-4 mb-20">
+          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+            <p class="text-3xl sm:text-4xl text-midnight font-bold mb-1">+40%</p>
+            <p class="text-sm text-slate leading-relaxed text-pretty">Increase in after-hours call capture.</p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+            <p class="text-3xl sm:text-4xl text-midnight font-bold mb-1">3x faster</p>
+            <p class="text-sm text-slate leading-relaxed text-pretty">Time-to-contact for new leasing leads.</p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+            <p class="text-3xl sm:text-4xl text-midnight font-bold mb-1">–30%</p>
+            <p class="text-sm text-slate leading-relaxed text-pretty">Reduction in time-to-schedule maintenance work orders.</p>
+          </div>
+          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+            <p class="text-3xl sm:text-4xl text-midnight font-bold mb-1">24/7</p>
+            <p class="text-sm text-slate leading-relaxed text-pretty">Coverage without adding headcount or burning out your team.</p>
+          </div>
+        </div>
+
+        <!-- Testimonials — Harvey/Alven Style -->
+        <div class="reveal">
+          <div class="rounded-[28px] overflow-hidden bg-white border border-surface-lighter/60 shadow-[0_2px_24px_rgba(0,0,0,0.05)]">
+            <div class="grid lg:grid-cols-2 min-h-[480px]">
+
+              <!-- Left: Quote -->
+              <div class="flex flex-col justify-center p-8 sm:p-10 lg:p-14 order-2 lg:order-1">
+                <div id="testimonial-content" class="testimonial-content">
+                  <svg width="36" height="36" viewBox="0 0 32 32" fill="none" class="mb-8 opacity-15">
+                    <path d="M12.8 16H8C8 11.6 11.6 8 16 8V11.2C13.4 11.2 11.2 13.4 11.2 16H12.8C14.1 16 15.2 17.1 15.2 18.4V22.4C15.2 23.7 14.1 24.8 12.8 24.8H8.8C7.5 24.8 6.4 23.7 6.4 22.4V16H12.8ZM25.6 16H20.8C20.8 11.6 24.4 8 28.8 8V11.2C26.2 11.2 24 13.4 24 16H25.6C26.9 16 28 17.1 28 18.4V22.4C28 23.7 26.9 24.8 25.6 24.8H21.6C20.3 24.8 19.2 23.7 19.2 22.4V16H25.6Z" fill="#7C3AED"/>
+                  </svg>
+                  <blockquote id="testimonial-text" class="text-lg sm:text-xl lg:text-2xl text-midnight leading-relaxed mb-10 font-medium text-pretty" style="min-height: 120px;">
+                    "We went from missing 40% of after-hours calls to missing zero. Haven's receptionist handles the noise so my team can focus on the work that actually needs a human brain."
+                  </blockquote>
+                  <div id="testimonial-author">
+                    <p id="testimonial-name" class="text-base text-midnight font-bold">Sarah Rodriguez</p>
+                    <p id="testimonial-role" class="text-sm text-slate mt-1">VP of Operations, Oakridge Properties — 2,400 units</p>
+                  </div>
+                </div>
+
+                <!-- Pagination Dots -->
+                <div class="flex items-center gap-2 mt-10">
+                  <button onclick="switchTestimonial(0)" id="testimonial-dot-0" class="testimonial-dot testimonial-dot-active" aria-label="Testimonial 1"></button>
+                  <button onclick="switchTestimonial(1)" id="testimonial-dot-1" class="testimonial-dot" aria-label="Testimonial 2"></button>
+                  <button onclick="switchTestimonial(2)" id="testimonial-dot-2" class="testimonial-dot" aria-label="Testimonial 3"></button>
+                  <button onclick="switchTestimonial(3)" id="testimonial-dot-3" class="testimonial-dot" aria-label="Testimonial 4"></button>
+                </div>
+              </div>
+
+              <!-- Right: Portrait -->
+              <div class="relative order-1 lg:order-2 h-64 sm:h-80 lg:h-auto" style="background: #F0ECFE;">
+                <img id="testimonial-portrait" src="assets/images/testimonial-img 1.png" alt="Sarah Rodriguez" class="testimonial-portrait w-full h-full object-cover object-center">
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ===================== INTEGRATIONS ===================== -->
+    <section id="integrations" class="py-24 sm:py-32 relative overflow-hidden">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+
+        <!-- Header -->
+        <div class="max-w-2xl mb-16 reveal">
+          <p class="text-xs uppercase tracking-widest text-blue-600 mb-4 font-semibold">Integrations</p>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance">
+            Deeply embedded in your existing&nbsp;systems.
+          </h2>
+          <p class="text-lg text-slate leading-relaxed text-pretty">
+            Haven doesn't ask your team to learn a new system of record. Our agents plug into the property management software you already use.
+          </p>
+        </div>
+
+        <div class="grid lg:grid-cols-5 gap-8 lg:gap-10 items-start">
+
+          <!-- Left: Visual Panel (3 cols) -->
+          <div class="reveal reveal-delay-1 lg:col-span-3">
+            <div id="integration-visual-wrap" class="rounded-[24px] bg-white border border-surface-lighter/60 shadow-[0_2px_24px_rgba(0,0,0,0.05)] overflow-hidden" style="min-height: 440px;">
+
+              <!-- Panel 0: Reads & Writes -->
+              <div id="integration-panel-0" class="integration-visual p-8 sm:p-10">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                  </div>
+                  <p class="text-sm font-bold text-midnight">Live PMS Sync</p>
+                </div>
+                <!-- Mock UI: Activity log -->
+                <div class="space-y-3">
+                  <div class="flex items-start gap-3 p-4 rounded-xl bg-surface-light/80 border border-surface-lighter/40">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm text-midnight font-semibold">Work order #4821 created in Yardi</p>
+                      <p class="text-xs text-slate mt-0.5">Unit 204-B — Garbage disposal not working. Assigned to Ace Plumbing.</p>
+                      <p class="text-[10px] text-slate mt-1.5 font-mono">2 min ago · Haven Maintenance Agent</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start gap-3 p-4 rounded-xl bg-surface-light/80 border border-surface-lighter/40">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm text-midnight font-semibold">Resident note updated</p>
+                      <p class="text-xs text-slate mt-0.5">Added follow-up note: "Tenant confirmed Saturday 9–12 window works."</p>
+                      <p class="text-[10px] text-slate mt-1.5 font-mono">8 min ago · Haven Receptionist Agent</p>
+                    </div>
+                  </div>
+                  <div class="flex items-start gap-3 p-4 rounded-xl bg-surface-light/80 border border-surface-lighter/40">
+                    <div class="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center flex-shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <p class="text-sm text-midnight font-semibold">Tour scheduled — lead assigned</p>
+                      <p class="text-xs text-slate mt-0.5">Jessica M. · 2BR at Maple Ridge · Thu 3:00 PM. Assigned to Leasing Team A.</p>
+                      <p class="text-[10px] text-slate mt-1.5 font-mono">14 min ago · Haven Leasing Agent</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel 1: Follows Workflows -->
+              <div id="integration-panel-1" class="integration-visual hidden p-8 sm:p-10">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                  </div>
+                  <p class="text-sm font-bold text-midnight">Your Workflow, Preserved</p>
+                </div>
+                <!-- Mock UI: Workflow config -->
+                <div class="rounded-xl border border-surface-lighter/60 overflow-hidden">
+                  <div class="px-5 py-3 bg-surface-light/60 border-b border-surface-lighter/40 flex items-center gap-2">
+                    <div class="w-2 h-2 rounded-full bg-emerald-400"></div>
+                    <span class="text-xs font-semibold text-midnight">Maintenance Request Pipeline</span>
+                    <span class="text-[10px] text-slate ml-auto">Active · Yardi Voyager</span>
+                  </div>
+                  <div class="p-5 space-y-3">
+                    <div class="flex items-center gap-3">
+                      <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-[10px] font-bold text-blue-600">1</div>
+                      <div class="flex-1 text-sm text-midnight">Resident calls → Haven answers, captures issue</div>
+                      <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">Auto</span>
+                    </div>
+                    <div class="w-px h-4 bg-surface-lighter ml-3.5"></div>
+                    <div class="flex items-center gap-3">
+                      <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-[10px] font-bold text-blue-600">2</div>
+                      <div class="flex-1 text-sm text-midnight">Create work order using <span class="font-mono text-xs bg-surface-light px-1.5 py-0.5 rounded">your custom fields</span></div>
+                      <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">Auto</span>
+                    </div>
+                    <div class="w-px h-4 bg-surface-lighter ml-3.5"></div>
+                    <div class="flex items-center gap-3">
+                      <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-[10px] font-bold text-blue-600">3</div>
+                      <div class="flex-1 text-sm text-midnight">Route to assigned vendor per your rules</div>
+                      <span class="text-[10px] text-emerald-600 font-semibold bg-emerald-50 px-2 py-0.5 rounded-full">Auto</span>
+                    </div>
+                    <div class="w-px h-4 bg-surface-lighter ml-3.5"></div>
+                    <div class="flex items-center gap-3">
+                      <div class="w-7 h-7 rounded-lg bg-amber-50 flex items-center justify-center text-[10px] font-bold text-amber-600">4</div>
+                      <div class="flex-1 text-sm text-midnight">Follow up with resident + vendor for scheduling</div>
+                      <span class="text-[10px] text-blue-600 font-semibold bg-blue-50 px-2 py-0.5 rounded-full">Smart</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel 2: Escalation Rules -->
+              <div id="integration-panel-2" class="integration-visual hidden p-8 sm:p-10">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                  </div>
+                  <p class="text-sm font-bold text-midnight">Escalation & Routing Rules</p>
+                </div>
+                <!-- Mock UI: Rules table -->
+                <div class="rounded-xl border border-surface-lighter/60 overflow-hidden">
+                  <div class="px-5 py-3 bg-surface-light/60 border-b border-surface-lighter/40">
+                    <span class="text-xs font-semibold text-midnight">Active Escalation Rules</span>
+                  </div>
+                  <div class="divide-y divide-surface-lighter/40">
+                    <div class="px-5 py-4 flex items-center gap-4">
+                      <div class="w-2 h-2 rounded-full bg-rose-400 flex-shrink-0"></div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm text-midnight font-medium">Emergency maintenance</p>
+                        <p class="text-xs text-slate">Flooding, fire, gas leak, lockout</p>
+                      </div>
+                      <span class="text-xs font-semibold text-rose-600 bg-rose-50 px-3 py-1 rounded-full whitespace-nowrap">→ On-call manager</span>
+                    </div>
+                    <div class="px-5 py-4 flex items-center gap-4">
+                      <div class="w-2 h-2 rounded-full bg-amber-400 flex-shrink-0"></div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm text-midnight font-medium">Legal or compliance inquiry</p>
+                        <p class="text-xs text-slate">Fair housing, lease disputes, eviction</p>
+                      </div>
+                      <span class="text-xs font-semibold text-amber-600 bg-amber-50 px-3 py-1 rounded-full whitespace-nowrap">→ Property manager</span>
+                    </div>
+                    <div class="px-5 py-4 flex items-center gap-4">
+                      <div class="w-2 h-2 rounded-full bg-blue-400 flex-shrink-0"></div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm text-midnight font-medium">VIP resident request</p>
+                        <p class="text-xs text-slate">Tagged accounts, board members</p>
+                      </div>
+                      <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full whitespace-nowrap">→ Regional director</span>
+                    </div>
+                    <div class="px-5 py-4 flex items-center gap-4">
+                      <div class="w-2 h-2 rounded-full bg-emerald-400 flex-shrink-0"></div>
+                      <div class="flex-1 min-w-0">
+                        <p class="text-sm text-midnight font-medium">Standard requests</p>
+                        <p class="text-xs text-slate">General maintenance, noise complaints, amenity bookings</p>
+                      </div>
+                      <span class="text-xs font-semibold text-emerald-600 bg-emerald-50 px-3 py-1 rounded-full whitespace-nowrap">→ Haven handles</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Panel 3: Audit Trail -->
+              <div id="integration-panel-3" class="integration-visual hidden p-8 sm:p-10">
+                <div class="flex items-center gap-3 mb-6">
+                  <div class="w-8 h-8 rounded-lg bg-blue-100 flex items-center justify-center">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                  </div>
+                  <p class="text-sm font-bold text-midnight">Full Audit Trail</p>
+                </div>
+                <!-- Mock UI: Audit log -->
+                <div class="rounded-xl border border-surface-lighter/60 overflow-hidden">
+                  <div class="px-5 py-3 bg-surface-light/60 border-b border-surface-lighter/40 flex items-center justify-between">
+                    <span class="text-xs font-semibold text-midnight">Work Order #4821 — Timeline</span>
+                    <span class="text-[10px] text-slate">Unit 204-B · Maple Ridge</span>
+                  </div>
+                  <div class="p-5 space-y-0">
+                    <div class="flex gap-4">
+                      <div class="flex flex-col items-center">
+                        <div class="w-2.5 h-2.5 rounded-full bg-blue-500 mt-1.5"></div>
+                        <div class="w-px flex-1 bg-surface-lighter"></div>
+                      </div>
+                      <div class="pb-5">
+                        <p class="text-sm text-midnight font-medium">Inbound call received</p>
+                        <p class="text-xs text-slate mt-0.5">Resident reported garbage disposal issue. Call duration: 2m 14s.</p>
+                        <p class="text-[10px] text-slate mt-1 font-mono">Mar 22, 9:41 AM · Receptionist Agent</p>
+                      </div>
+                    </div>
+                    <div class="flex gap-4">
+                      <div class="flex flex-col items-center">
+                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5"></div>
+                        <div class="w-px flex-1 bg-surface-lighter"></div>
+                      </div>
+                      <div class="pb-5">
+                        <p class="text-sm text-midnight font-medium">Work order created in Yardi</p>
+                        <p class="text-xs text-slate mt-0.5">Category: Plumbing. Priority: Normal. Vendor: Ace Plumbing.</p>
+                        <p class="text-[10px] text-slate mt-1 font-mono">Mar 22, 9:42 AM · Maintenance Agent</p>
+                      </div>
+                    </div>
+                    <div class="flex gap-4">
+                      <div class="flex flex-col items-center">
+                        <div class="w-2.5 h-2.5 rounded-full bg-violet-500 mt-1.5"></div>
+                        <div class="w-px flex-1 bg-surface-lighter"></div>
+                      </div>
+                      <div class="pb-5">
+                        <p class="text-sm text-midnight font-medium">Vendor contacted via SMS</p>
+                        <p class="text-xs text-slate mt-0.5">Ace Plumbing confirmed availability for Saturday 9–12 AM.</p>
+                        <p class="text-[10px] text-slate mt-1 font-mono">Mar 22, 9:44 AM · Maintenance Agent</p>
+                      </div>
+                    </div>
+                    <div class="flex gap-4">
+                      <div class="flex flex-col items-center">
+                        <div class="w-2.5 h-2.5 rounded-full bg-emerald-500 mt-1.5"></div>
+                      </div>
+                      <div>
+                        <p class="text-sm text-midnight font-medium">Resident notified</p>
+                        <p class="text-xs text-slate mt-0.5">SMS sent: "Your repair is scheduled for Saturday 9–12 AM."</p>
+                        <p class="text-[10px] text-slate mt-1 font-mono">Mar 22, 9:45 AM · Maintenance Agent</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Right: Clickable Tabs (2 cols) -->
+          <div class="reveal reveal-delay-2 lg:col-span-2 space-y-2">
+            <button onclick="switchIntegrationTab(0)" id="integration-tab-0" class="integration-tab integration-tab-active w-full text-left p-5 rounded-xl transition-all">
+              <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center mt-0.5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm text-midnight font-bold mb-1">Reads & writes directly in your PMS</p>
+                  <p class="text-xs text-slate leading-relaxed text-pretty">Notes, tasks, and assignments are always up to date — no syncing, no copy-paste.</p>
+                </div>
+              </div>
+            </button>
+
+            <button onclick="switchIntegrationTab(1)" id="integration-tab-1" class="integration-tab w-full text-left p-5 rounded-xl transition-all">
+              <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center mt-0.5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm text-midnight font-bold mb-1">Follows your fields and workflows</p>
+                  <p class="text-xs text-slate leading-relaxed text-pretty">Haven adapts to how your team already operates — no new tool to learn.</p>
+                </div>
+              </div>
+            </button>
+
+            <button onclick="switchIntegrationTab(2)" id="integration-tab-2" class="integration-tab w-full text-left p-5 rounded-xl transition-all">
+              <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center mt-0.5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm text-midnight font-bold mb-1">Respects your escalation rules</p>
+                  <p class="text-xs text-slate leading-relaxed text-pretty">Humans stay in control. Haven routes and escalates exactly how you've configured it.</p>
+                </div>
+              </div>
+            </button>
+
+            <button onclick="switchIntegrationTab(3)" id="integration-tab-3" class="integration-tab w-full text-left p-5 rounded-xl transition-all">
+              <div class="flex items-start gap-3">
+                <div class="flex-shrink-0 w-9 h-9 rounded-lg bg-blue-50 flex items-center justify-center mt-0.5">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                </div>
+                <div>
+                  <p class="text-sm text-midnight font-bold mb-1">Full audit trail</p>
+                  <p class="text-xs text-slate leading-relaxed text-pretty">Every action, message, and work order change is logged — total visibility.</p>
+                </div>
+              </div>
+            </button>
+
+            <!-- Tagline -->
+            <div class="pt-4 mt-2 border-t border-surface-lighter/60">
+              <p class="text-xs text-slate leading-relaxed text-pretty italic px-5">
+                Embedded where your team already works. No new login, no separate inbox, no extra system to maintain.
+              </p>
+            </div>
+
+            <!-- PMS logos strip — overlapping circles -->
+            <div class="pt-4 px-5">
+              <div class="flex items-center">
+                <div class="w-11 h-11 rounded-full border-[3px] border-white relative -mr-2.5 overflow-hidden bg-white shadow-sm" title="Buildium"><img src="assets/images/logos/buildium.jpg" alt="Buildium" class="w-full h-full object-contain rounded-full"></div>
+                <div class="w-11 h-11 rounded-full border-[3px] border-white relative -mr-2.5 overflow-hidden bg-white shadow-sm" title="Yardi"><img src="assets/images/logos/yardi.jpg" alt="Yardi" class="w-full h-full object-contain rounded-full"></div>
+                <div class="w-11 h-11 rounded-full border-[3px] border-white relative -mr-2.5 overflow-hidden bg-white shadow-sm" title="RealPage"><img src="assets/images/logos/realpage.jpg" alt="RealPage" class="w-full h-full object-contain rounded-full"></div>
+                <div class="w-11 h-11 rounded-full border-[3px] border-white relative -mr-2.5 overflow-hidden bg-white shadow-sm" title="Entrata"><img src="assets/images/logos/entrata.png" alt="Entrata" class="w-full h-full object-contain rounded-full"></div>
+                <div class="w-11 h-11 rounded-full border-[3px] border-white relative -mr-2.5 overflow-hidden bg-white shadow-sm" title="AppFolio"><img src="assets/images/logos/appfolio.png" alt="AppFolio" class="w-full h-full object-contain rounded-full"></div>
+                <div class="w-11 h-11 rounded-full border-[3px] border-white relative overflow-hidden bg-white shadow-sm" title="Rent Manager"><img src="assets/images/logos/rentmanager.jpg" alt="Rent Manager" class="w-full h-full object-contain rounded-full"></div>
+                <span class="text-[10px] text-slate ml-3">+ more</span>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FINAL CTA ===================== -->
+    <section id="demo" class="py-24 sm:py-32 relative">
+      <div
+        class="absolute inset-0"
+        style="
+          background: radial-gradient(
+            ellipse 60% 50% at 50% 50%,
+            rgba(124, 58, 237, 0.03) 0%,
+            transparent 100%
+          );
+        "
+      ></div>
+      <div class="relative max-w-7xl mx-auto px-6 lg:px-8">
+        <div class="reveal">
+          <h2 class="text-4xl sm:text-5xl lg:text-6xl text-midnight leading-tight mb-4 font-bold text-pretty" style="max-width: 15ch;">
+            Give your team superpowers.
+          </h2>
+          <p class="text-lg text-slate leading-relaxed mb-10 max-w-xl text-pretty">
+            See Haven in action with your properties, your SOPs, and your PMS. Most teams are live within a week.
+          </p>
+          <a
+            href="#"
+            class="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-midnight text-white font-semibold text-lg hover:bg-slate-light transition-all duration-300 hover:shadow-[0_0_60px_rgba(0,0,0,0.15)]"
+          >
+            Book a Demo
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path
+                d="M6.75 4.5L11.25 9L6.75 13.5"
+                stroke="currentColor"
+                stroke-width="2"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================== FOOTER ===================== -->
+    <footer class="border-t border-surface-lighter py-8 bg-surface/50">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+        <div class="flex flex-col sm:flex-row items-center justify-between gap-6">
+          <!-- Logo -->
+          <div class="flex-shrink-0">
+            <a href="#hero" class="flex items-center">
+              <svg
+                height="28"
+                viewBox="0 0 214 65"
+                fill="none"
+                xmlns="http://www.w3.org/2000/svg"
+              >
+                <path
+                  fill-rule="evenodd"
+                  clip-rule="evenodd"
+                  d="M58 33C58 49.0163 45.0163 62 29 62C12.9837 62 0 49.0163 0 33C0 16.9837 12.9837 4 29 4C45.0163 4 58 16.9837 58 33ZM21.8467 45.0833C21.8467 42.147 19.4663 39.7667 16.53 39.7667C13.5937 39.7667 11.2133 42.147 11.2133 45.0833C11.2133 48.0196 13.5937 50.4 16.53 50.4C19.4663 50.4 21.8467 48.0196 21.8467 45.0833ZM11.2133 32.9033C11.2133 29.967 13.5937 27.5867 16.53 27.5867C19.4663 27.5867 21.8467 29.967 21.8467 32.9033C21.8467 35.8396 19.4663 38.22 16.53 38.22C13.5937 38.22 11.2133 35.8396 11.2133 32.9033ZM21.8467 20.9167C21.8467 17.9804 19.4663 15.6 16.53 15.6C13.5937 15.6 11.2133 17.9804 11.2133 20.9167C11.2133 23.853 13.5937 26.2333 16.53 26.2333C19.4663 26.2333 21.8467 23.853 21.8467 20.9167ZM23.5867 29.0147C23.5867 28.0792 23.8335 27.1604 24.3021 26.3508C26.3499 22.8137 31.4567 22.8137 33.5045 26.3508C33.9732 27.1604 34.22 28.0792 34.22 29.0147V36.4795C34.22 37.6103 33.8594 38.7117 33.1907 39.6236C31.0664 42.5203 26.7402 42.5203 24.6159 39.6236C23.9472 38.7117 23.5867 37.6103 23.5867 36.4795V29.0147ZM45.82 20.9167C45.82 17.9804 43.4396 15.6 40.5033 15.6C37.567 15.6 35.1867 17.9804 35.1867 20.9167V24.3306C35.1867 25.5609 35.6133 26.7531 36.3939 27.704C38.5209 30.295 42.4858 30.295 44.6127 27.704C45.3933 26.7531 45.82 25.5609 45.82 24.3306V20.9167ZM35.1867 41.6477C35.1867 40.4306 35.6042 39.2504 36.3696 38.3042C38.4975 35.6733 42.5092 35.6733 44.6371 38.3042C45.4025 39.2504 45.82 40.4306 45.82 41.6477V45.0833C45.82 48.0196 43.4396 50.4 40.5033 50.4C37.567 50.4 35.1867 48.0196 35.1867 45.0833V41.6477Z"
+                  fill="#2D2B2E"
+                />
+                <path
+                  d="M77.152 48.432C75.936 48.432 75.008 48.096 74.368 47.424C73.728 46.752 73.408 45.808 73.408 44.592V17.568C73.408 16.352 73.728 15.408 74.368 14.736C75.008 14.064 75.936 13.728 77.152 13.728C78.336 13.728 79.248 14.064 79.888 14.736C80.528 15.408 80.848 16.352 80.848 17.568V27.744H96.592V17.568C96.592 16.352 96.912 15.408 97.552 14.736C98.192 14.064 99.104 13.728 100.288 13.728C101.504 13.728 102.432 14.064 103.072 14.736C103.712 15.408 104.032 16.352 104.032 17.568V44.592C104.032 45.808 103.712 46.752 103.072 47.424C102.432 48.096 101.504 48.432 100.288 48.432C99.104 48.432 98.192 48.096 97.552 47.424C96.912 46.752 96.592 45.808 96.592 44.592V33.936H80.848V44.592C80.848 45.808 80.528 46.752 79.888 47.424C79.28 48.096 78.368 48.432 77.152 48.432ZM118.205 48.528C116.477 48.528 114.925 48.192 113.549 47.52C112.173 46.848 111.101 45.936 110.333 44.784C109.565 43.632 109.181 42.336 109.181 40.896C109.181 39.168 109.629 37.808 110.525 36.816C111.421 35.792 112.877 35.072 114.893 34.656C116.909 34.208 119.581 33.984 122.909 33.984H125.453V37.728H122.957C121.325 37.728 119.997 37.824 118.973 38.016C117.981 38.176 117.261 38.464 116.813 38.88C116.397 39.296 116.189 39.872 116.189 40.608C116.189 41.504 116.493 42.24 117.101 42.816C117.741 43.392 118.653 43.68 119.837 43.68C120.765 43.68 121.581 43.472 122.285 43.056C123.021 42.608 123.597 42.016 124.013 41.28C124.429 40.512 124.637 39.648 124.637 38.688V33.168C124.637 31.76 124.317 30.768 123.677 30.192C123.037 29.584 121.949 29.28 120.413 29.28C119.549 29.28 118.605 29.392 117.581 29.616C116.589 29.808 115.485 30.144 114.269 30.624C113.565 30.944 112.941 31.024 112.397 30.864C111.853 30.672 111.437 30.352 111.149 29.904C110.861 29.424 110.717 28.912 110.717 28.368C110.717 27.792 110.877 27.248 111.197 26.736C111.517 26.192 112.045 25.792 112.781 25.536C114.285 24.928 115.693 24.512 117.005 24.288C118.349 24.064 119.581 23.952 120.701 23.952C123.165 23.952 125.181 24.32 126.749 25.056C128.349 25.76 129.549 26.864 130.349 28.368C131.149 29.84 131.549 31.744 131.549 34.08V44.736C131.549 45.92 131.261 46.832 130.685 47.472C130.109 48.112 129.277 48.432 128.189 48.432C127.101 48.432 126.253 48.112 125.645 47.472C125.069 46.832 124.781 45.92 124.781 44.736V42.96L125.117 43.248C124.925 44.336 124.509 45.28 123.869 46.08C123.261 46.848 122.477 47.456 121.517 47.904C120.557 48.32 119.453 48.528 118.205 48.528ZM146.706 48.432C145.778 48.432 144.962 48.192 144.258 47.712C143.554 47.2 142.994 46.448 142.578 45.456L135.33 28.752C134.978 27.92 134.85 27.152 134.946 26.448C135.042 25.712 135.378 25.136 135.954 24.72C136.562 24.272 137.394 24.048 138.45 24.048C139.314 24.048 140.018 24.256 140.562 24.672C141.106 25.056 141.586 25.808 142.002 26.928L147.666 41.328H146.13L152.034 26.88C152.482 25.792 152.978 25.056 153.522 24.672C154.066 24.256 154.818 24.048 155.778 24.048C156.61 24.048 157.266 24.272 157.746 24.72C158.258 25.136 158.562 25.696 158.658 26.4C158.786 27.104 158.658 27.872 158.274 28.704L150.882 45.456C150.466 46.48 149.906 47.232 149.202 47.712C148.53 48.192 147.698 48.432 146.706 48.432ZM174.04 48.528C171.256 48.528 168.856 48.032 166.84 47.04C164.856 46.016 163.32 44.592 162.232 42.768C161.176 40.912 160.648 38.736 160.648 36.24C160.648 33.808 161.16 31.68 162.184 29.856C163.208 28 164.632 26.56 166.456 25.536C168.312 24.48 170.408 23.952 172.744 23.952C174.44 23.952 175.976 24.24 177.352 24.816C178.728 25.36 179.912 26.16 180.904 27.216C181.896 28.24 182.648 29.504 183.16 31.008C183.672 32.48 183.928 34.128 183.928 35.952C183.928 36.56 183.736 37.024 183.352 37.344C182.968 37.632 182.408 37.776 181.672 37.776H166.6V34.032H178.696L177.928 34.704C177.928 33.392 177.736 32.304 177.352 31.44C176.968 30.544 176.408 29.872 175.672 29.424C174.968 28.976 174.088 28.752 173.032 28.752C171.848 28.752 170.84 29.024 170.008 29.568C169.176 30.112 168.536 30.896 168.088 31.92C167.64 32.944 167.416 34.176 167.416 35.616V36C167.416 38.432 167.976 40.224 169.096 41.376C170.248 42.528 171.944 43.104 174.184 43.104C174.952 43.104 175.832 43.008 176.824 42.816C177.816 42.624 178.744 42.32 179.608 41.904C180.344 41.552 181 41.44 181.576 41.568C182.152 41.664 182.6 41.92 182.92 42.336C183.24 42.752 183.416 43.232 183.448 43.776C183.512 44.32 183.4 44.864 183.112 45.408C182.824 45.92 182.344 46.352 181.672 46.704C180.584 47.312 179.352 47.76 177.976 48.048C176.632 48.368 175.32 48.528 174.04 48.528ZM191.791 48.432C190.607 48.432 189.695 48.112 189.055 47.472C188.447 46.832 188.143 45.92 188.143 44.736V27.696C188.143 26.512 188.447 25.616 189.055 25.008C189.695 24.368 190.575 24.048 191.695 24.048C192.847 24.048 193.727 24.368 194.335 25.008C194.943 25.616 195.247 26.512 195.247 27.696V30.432L194.719 28.848C195.455 27.28 196.543 26.08 197.983 25.248C199.455 24.384 201.119 23.952 202.975 23.952C204.863 23.952 206.415 24.32 207.631 25.056C208.847 25.76 209.759 26.848 210.367 28.32C210.975 29.76 211.279 31.6 211.279 33.84V44.736C211.279 45.92 210.959 46.832 210.319 47.472C209.711 48.112 208.815 48.432 207.631 48.432C206.479 48.432 205.583 48.112 204.943 47.472C204.335 46.832 204.031 45.92 204.031 44.736V34.176C204.031 32.544 203.727 31.376 203.119 30.672C202.543 29.936 201.647 29.568 200.431 29.568C198.895 29.568 197.663 30.048 196.735 31.008C195.839 31.968 195.391 33.248 195.391 34.848V44.736C195.391 47.2 194.191 48.432 191.791 48.432Z"
+                  fill="#2D2B2E"
+                />
+              </svg>
+            </a>
+          </div>
+
+          <!-- Links -->
+          <nav class="flex flex-wrap items-center justify-center gap-x-8 gap-y-2">
+            <a href="#agents" class="text-sm text-slate hover:text-midnight transition-colors">Agents</a>
+            <a href="#how-it-works" class="text-sm text-slate hover:text-midnight transition-colors">Platform</a>
+            <a href="#results" class="text-sm text-slate hover:text-midnight transition-colors">Results</a>
+            <a href="#integrations" class="text-sm text-slate hover:text-midnight transition-colors">Integrations</a>
+            <a href="#" class="text-sm text-slate hover:text-midnight transition-colors">About</a>
+            <a href="#" class="text-sm text-slate hover:text-midnight transition-colors">Blog</a>
+            <a href="#" class="text-sm text-slate hover:text-midnight transition-colors">Privacy</a>
+            <a href="#" class="text-sm text-slate hover:text-midnight transition-colors">Terms</a>
+          </nav>
+
+          <!-- Copyright + Social -->
+          <div class="flex items-center gap-4 flex-shrink-0">
+            <p class="text-xs text-slate">&copy; 2026 Haven AI</p>
+            <a href="#" class="text-slate hover:text-midnight transition-colors" aria-label="LinkedIn">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+            </a>
+            <a href="#" class="text-slate hover:text-midnight transition-colors" aria-label="Twitter">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- ===================== JS ===================== -->
+    <script>
+      // Intersection Observer for reveal animations
+      const observer = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add("visible");
+            }
+          });
+        },
+        {
+          threshold: 0.1,
+          rootMargin: "0px 0px -40px 0px",
+        },
+      );
+
+      document
+        .querySelectorAll(".reveal")
+        .forEach((el) => observer.observe(el));
+
+      // Nav hero ↔ scrolled state
+      const nav = document.getElementById("nav");
+      const heroSection = document.getElementById("hero");
+
+      function updateNav() {
+        const heroBottom = heroSection.getBoundingClientRect().bottom;
+        if (heroBottom <= 80) {
+          nav.classList.remove("nav-hero");
+          nav.classList.add("nav-scrolled");
+        } else {
+          nav.classList.add("nav-hero");
+          nav.classList.remove("nav-scrolled");
+        }
+      }
+
+      updateNav();
+      window.addEventListener("scroll", updateNav, { passive: true });
+
+      // Mobile menu toggle
+      const mobileBtn = document.getElementById("mobile-menu-btn");
+      const mobileMenu = document.getElementById("mobile-menu");
+
+      mobileBtn.addEventListener("click", () => {
+        mobileMenu.classList.toggle("hidden");
+      });
+
+      // Close mobile menu on link click
+      mobileMenu.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          mobileMenu.classList.add("hidden");
+        });
+      });
+
+      // Smooth scroll for anchor links
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          const href = this.getAttribute("href");
+          if (href === "#") return;
+
+          e.preventDefault();
+          const target = document.querySelector(href);
+          if (target) {
+            target.scrollIntoView({ behavior: "smooth", block: "start" });
+          }
+        });
+      });
+
+      // Hero text rotator
+      const heroLines = [
+        "vendor follow-ups.",
+        "tenant phone calls.",
+        "leasing inquiries.",
+        "tour coordination.",
+        "maintenance requests.",
+        "after-hours calls.",
+        "rent collection reminders.",
+        "owner approvals.",
+      ];
+
+      const rotator = document.getElementById("hero-rotator");
+      let heroIndex = 0;
+
+      rotator.textContent = heroLines[0];
+
+      setInterval(() => {
+        rotator.classList.add("out");
+
+        setTimeout(() => {
+          heroIndex = (heroIndex + 1) % heroLines.length;
+          rotator.textContent = heroLines[heroIndex];
+          rotator.classList.remove("out");
+        }, 350);
+      }, 2800);
+
+      // ===================== SCROLL TEXT REVEAL (GSAP) =====================
+      gsap.registerPlugin(ScrollTrigger);
+
+      document.querySelectorAll('.scroll-text-wrap').forEach(el => {
+        const rawText = el.textContent.trim();
+        const words = rawText.split(/\s+/);
+        el.innerHTML = words
+          .map((w) => `<span class="scroll-text-word">${w}</span>`)
+          .join(" ");
+
+        gsap.to(el.querySelectorAll('.scroll-text-word'), {
+          color: "#2D2B2E",
+          stagger: 0.05,
+          scrollTrigger: {
+            trigger: el,
+            start: "top 80%",
+            end: "bottom 30%",
+            scrub: 1,
+          },
+        });
+      });
+
+      // ===================== TESTIMONIALS =====================
+      const testimonials = [
+        {
+          text: '"We went from missing 40% of after-hours calls to missing zero. Haven\'s receptionist handles the noise so my team can focus on the work that actually needs a human brain."',
+          name: 'Sarah Rodriguez',
+          role: 'VP of Operations, Oakridge Properties — 2,400 units',
+          portrait: 'assets/images/testimonial-img 1.png',
+        },
+        {
+          text: '"Our leasing team was drowning in lead follow-up. Haven responds in under a minute and books tours while we sleep. Occupancy is up 6 points since we turned it on."',
+          name: 'Marcus Kim',
+          role: 'Director of Leasing, Summit Living — 8,000 units',
+          portrait: 'assets/images/testimonial-img 2.png',
+        },
+        {
+          text: '"Maintenance used to be our biggest source of resident complaints. Since Haven started coordinating vendors and sending updates, our satisfaction scores are the highest they\'ve ever been."',
+          name: 'Aisha Thompson',
+          role: 'Regional Manager, Beacon Residential — 5,200 units',
+          portrait: 'assets/images/testimonial-img 3.png',
+        },
+        {
+          text: '"I was skeptical about AI handling our calls. But Haven follows our exact escalation rules, and the handoffs to my team come with better notes than most of our own staff write."',
+          name: 'David Chen',
+          role: 'COO, Meridian Property Group — 12,000 units',
+          portrait: 'assets/images/testimonial-img 4.png',
+        },
+      ];
+
+      let currentTestimonial = 0;
+
+      function switchTestimonial(index) {
+        if (index === currentTestimonial) return;
+        const t = testimonials[index];
+        const contentEl = document.getElementById('testimonial-content');
+        const portraitEl = document.getElementById('testimonial-portrait');
+        const textEl = document.getElementById('testimonial-text');
+        const nameEl = document.getElementById('testimonial-name');
+        const roleEl = document.getElementById('testimonial-role');
+
+        // Start exit animation
+        contentEl.classList.add('switching');
+        portraitEl.classList.add('switching');
+
+        setTimeout(() => {
+          // Swap content
+          textEl.textContent = t.text;
+          nameEl.textContent = t.name;
+          roleEl.textContent = t.role;
+          portraitEl.src = t.portrait;
+          portraitEl.alt = t.name;
+
+          // Enter animation
+          contentEl.classList.remove('switching');
+          portraitEl.classList.remove('switching');
+        }, 300);
+
+        // Update dots
+        document.querySelectorAll('.testimonial-dot').forEach(d => d.classList.remove('testimonial-dot-active'));
+        document.getElementById('testimonial-dot-' + index).classList.add('testimonial-dot-active');
+
+        currentTestimonial = index;
+      }
+
+      // ===================== PLATFORM TABS =====================
+      function switchPlatformTab(index) {
+        // Hide all panels
+        document.querySelectorAll('.platform-panel').forEach(p => p.classList.add('hidden'));
+        // Show target panel
+        const panel = document.getElementById('platform-panel-' + index);
+        if (panel) {
+          panel.classList.remove('hidden');
+          // Re-trigger animation
+          panel.style.animation = 'none';
+          panel.offsetHeight; // force reflow
+          panel.style.animation = '';
+        }
+        // Update tab states
+        document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('platform-tab-active'));
+        const tab = document.getElementById('platform-tab-' + index);
+        if (tab) tab.classList.add('platform-tab-active');
+      }
+
+      // ===================== INTEGRATION TABS =====================
+      let currentIntegrationTab = 0;
+
+      function switchIntegrationTab(index) {
+        if (index === currentIntegrationTab) return;
+
+        const currentPanel = document.getElementById('integration-panel-' + currentIntegrationTab);
+        const nextPanel = document.getElementById('integration-panel-' + index);
+
+        // Fade out current
+        if (currentPanel) currentPanel.classList.add('switching');
+
+        setTimeout(() => {
+          // Hide all, show next
+          document.querySelectorAll('.integration-visual').forEach(p => {
+            p.classList.add('hidden');
+            p.classList.remove('switching');
+          });
+          if (nextPanel) {
+            nextPanel.classList.remove('hidden');
+            // Force reflow then remove switching for enter animation
+            nextPanel.offsetHeight;
+          }
+        }, 250);
+
+        // Update tabs
+        document.querySelectorAll('.integration-tab').forEach(t => t.classList.remove('integration-tab-active'));
+        document.getElementById('integration-tab-' + index).classList.add('integration-tab-active');
+
+        currentIntegrationTab = index;
+      }
+
+      // ===================== SNIPPET FEED =====================
+      const snippetData = [
+        {
+          icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>',
+          color: "amber",
+          label: "Work order created",
+          detail: "Unit 4B — Leaky faucet in kitchen",
+          status: "Assigned to Ace Plumbing",
+          type: "assign",
+        },
+        {
+          icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4C3 3.67 3.01 3.34 3.03 3.02C3.07 2.44 3.52 2 4.08 2H7.08C7.56 2 7.97 2.35 8.05 2.82C8.15 3.49 8.32 4.14 8.57 4.76L7.02 6.31"/><path d="M15 9l3 3"/></svg>',
+          color: "blue",
+          label: "Call triaged & routed",
+          detail: "Tenant: Maria Chen — Noise complaint",
+          status: "Routed to on-site manager",
+          type: "route",
+        },
+        {
+          icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/><path d="M8 14h.01"/><path d="M12 14h.01"/><path d="M16 14h.01"/></svg>',
+          color: "violet",
+          label: "Appointment scheduled",
+          detail: "HVAC inspection — Tomorrow 2:00 PM",
+          status: "Vendor confirmed",
+          type: "confirm",
+        },
+        {
+          icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>',
+          color: "emerald",
+          label: "Follow-up SMS sent",
+          detail: "To: James Rivera — Maintenance update",
+          status: "Delivered",
+          type: "complete",
+        },
+        {
+          icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>',
+          color: "rose",
+          label: "Checklist item completed",
+          detail: "Move-in inspection — Unit 12A",
+          status: "All items verified",
+          type: "check",
+        },
+        {
+          icon: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>',
+          color: "blue",
+          label: "Note logged to PMS",
+          detail: "Tenant requested early lease renewal",
+          status: "Synced to AppFolio",
+          type: "complete",
+        },
+      ];
+
+      const colorMap = {
+        amber: {
+          bg: "bg-amber-500/20",
+          text: "text-amber-300",
+          dot: "bg-amber-400",
+          statusText: "text-amber-300",
+        },
+        blue: {
+          bg: "bg-blue-500/20",
+          text: "text-blue-300",
+          dot: "bg-blue-400",
+          statusText: "text-blue-300",
+        },
+        violet: {
+          bg: "bg-violet-500/20",
+          text: "text-violet-300",
+          dot: "bg-violet-400",
+          statusText: "text-violet-300",
+        },
+        emerald: {
+          bg: "bg-emerald-500/20",
+          text: "text-emerald-300",
+          dot: "bg-emerald-400",
+          statusText: "text-emerald-300",
+        },
+        rose: {
+          bg: "bg-rose-500/20",
+          text: "text-rose-300",
+          dot: "bg-rose-400",
+          statusText: "text-rose-300",
+        },
+      };
+
+      const feed = document.getElementById("snippet-feed");
+      const MAX_VISIBLE = 3;
+      let snippetIndex = 0;
+      const activeSnippets = [];
+
+      function createSnippetEl(data) {
+        const c = colorMap[data.color];
+        const card = document.createElement("div");
+        card.className = "snippet-card rounded-2xl px-4 py-3.5";
+
+        card.innerHTML = `
+        <div class="flex items-start gap-3">
+          <div class="snippet-icon flex-shrink-0 w-8 h-8 rounded-lg ${c.bg} ${c.text} flex items-center justify-center">
+            ${data.icon}
+          </div>
+          <div class="flex-1 min-w-0">
+            <div class="snippet-label flex items-center gap-2 mb-0.5">
+              <span class="text-[13px] font-semibold text-white truncate">${data.label}</span>
+            </div>
+            <p class="snippet-detail text-[11px] text-white/45 leading-relaxed mb-2 truncate">${data.detail}</p>
+            <div class="snippet-bar-wrap flex items-center gap-2">
+              <div class="h-[3px] flex-1 rounded-full bg-white/8 overflow-hidden">
+                <div class="snippet-progress h-full rounded-full ${c.dot}" style="opacity: 0.8;"></div>
+              </div>
+              <span class="snippet-status-badge inline-flex items-center gap-1 text-[10px] font-medium ${c.statusText} whitespace-nowrap">
+                <svg class="snippet-check-icon" width="10" height="10" viewBox="0 0 12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2.5 6.5L5 9L9.5 3.5"/></svg>
+                ${data.status}
+              </span>
+            </div>
+          </div>
+        </div>
+      `;
+        return card;
+      }
+
+      function addSnippet() {
+        const data = snippetData[snippetIndex % snippetData.length];
+        snippetIndex++;
+
+        const el = createSnippetEl(data);
+
+        // Insert at top, push existing cards down
+        if (feed.firstChild) {
+          feed.insertBefore(el, feed.firstChild);
+        } else {
+          feed.appendChild(el);
+        }
+        activeSnippets.push(el);
+
+        // Trigger entrance
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            el.classList.add("visible");
+          });
+        });
+
+        // Fill progress bar
+        setTimeout(() => {
+          const bar = el.querySelector(".snippet-progress");
+          if (bar) bar.classList.add("fill");
+        }, 800);
+
+        // Show status badge with check
+        setTimeout(() => {
+          const badge = el.querySelector(".snippet-status-badge");
+          if (badge) badge.classList.add("done");
+        }, 1800);
+
+        // Dim card to settled state
+        setTimeout(() => {
+          el.classList.add("settled");
+        }, 2400);
+
+        // Remove oldest if too many
+        if (activeSnippets.length > MAX_VISIBLE) {
+          const oldest = activeSnippets.shift();
+          oldest.classList.remove("visible");
+          oldest.classList.add("exiting");
+          setTimeout(() => oldest.remove(), 450);
+        }
+      }
+
+      // Initial staggered load — first cards appear quickly
+      setTimeout(() => addSnippet(), 600);
+      setTimeout(() => addSnippet(), 1800);
+      setTimeout(() => addSnippet(), 3000);
+
+      // Continuous cycle — new card every ~3.5s
+      setInterval(addSnippet, 3500);
+    </script>
+  </body>
+</html>
