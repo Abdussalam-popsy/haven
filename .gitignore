@@ -1,0 +1,8 @@
+# Large media files (use LFS or CDN for production)
+assets/*.mp4
+
+# Backup of original dark-mode version
+old/
+
+# OS files
+.DS_Store
