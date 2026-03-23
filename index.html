@@ -285,6 +285,59 @@
         transition-delay: 0.05s;
       }
 
+      /* Platform tab styles */
+      .platform-tab-bar {
+        opacity: 0;
+        transition: opacity 0.3s ease;
+      }
+      .platform-tab-active .platform-tab-bar {
+        opacity: 1;
+      }
+      .platform-tab:not(.platform-tab-active) {
+        opacity: 0.55;
+      }
+      .platform-tab:hover {
+        opacity: 1 !important;
+      }
+      .platform-tab-active {
+        opacity: 1;
+        background: rgba(246, 242, 238, 0.3);
+      }
+
+      /* Platform panel transitions */
+      .platform-panel {
+        animation: panelFadeIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .platform-panel.hidden {
+        display: none;
+      }
+      @keyframes panelFadeIn {
+        from { opacity: 0; transform: translateY(8px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+
+      /* Testimonial selector */
+      .testimonial-btn {
+        opacity: 0.5;
+        transition: opacity 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      }
+      .testimonial-btn:hover {
+        opacity: 0.8;
+      }
+      .testimonial-btn-active {
+        opacity: 1 !important;
+        border-color: #C4B5FD !important;
+        box-shadow: 0 2px 16px rgba(124, 58, 237, 0.1) !important;
+      }
+      /* Quote fade transition */
+      @keyframes quoteFadeIn {
+        from { opacity: 0; transform: translateY(6px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .quote-animate {
+        animation: quoteFadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+
       /* Agent card hover */
       .agent-card {
         position: relative;
@@ -378,12 +431,7 @@
             <a
               href="#how-it-works"
               class="nav-link text-sm transition-colors duration-300"
-              >How It Works</a
-            >
-            <a
-              href="#integrations"
-              class="nav-link text-sm transition-colors duration-300"
-              >Integrations</a
+              >Platform</
             >
             <a
               href="#results"
@@ -444,11 +492,6 @@
             href="#how-it-works"
             class="nav-link block text-sm transition-colors"
             >How It Works</a
-          >
-          <a
-            href="#integrations"
-            class="nav-link block text-sm transition-colors"
-            >Integrations</a
           >
           <a href="#results" class="nav-link block text-sm transition-colors"
             >Results</a
@@ -575,8 +618,8 @@
           <!-- Row 1: Card LEFT, Text RIGHT -->
           <div class="reveal grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <!-- UI Card -->
-            <div class="rounded-3xl p-6 sm:p-8" style="background: linear-gradient(145deg, #EDE9FE 0%, #DDD6FE 50%, #C4B5FD40 100%);">
-              <div class="bg-white rounded-2xl shadow-lg shadow-violet-500/5 p-5 sm:p-6">
+            <div class="rounded-[28px] p-8 sm:p-10 lg:p-12" style="background: #F0ECFE;">
+              <div class="bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] p-5 sm:p-6">
                 <!-- Call log header -->
                 <div class="flex items-center justify-between mb-5">
                   <div class="flex items-center gap-3">
@@ -613,14 +656,14 @@
 
             <!-- Text -->
             <div>
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-violet-50 text-violet-600 text-xs font-semibold tracking-wide uppercase mb-5">
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-violet-50 text-violet-600 text-xs font-semibold tracking-wide uppercase mb-6">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4"/></svg>
                 Frontline Receptionist
               </span>
-              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4">
+              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4 text-balance">
                 Every call answered.<br>Every caller helped.
               </h3>
-              <p class="text-slate leading-relaxed mb-6">
+              <p class="text-slate leading-relaxed mb-6 text-pretty">
                 Answers every inbound call — day or night. Triages by urgency, captures structured data, and logs it directly into your PMS. No more voicemail black holes.
               </p>
               <div class="space-y-3">
@@ -644,14 +687,14 @@
           <div class="reveal grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <!-- Text -->
             <div class="lg:order-1">
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold tracking-wide uppercase mb-5">
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-50 text-amber-700 text-xs font-semibold tracking-wide uppercase mb-6">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
                 Maintenance Coordinator
               </span>
-              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4">
+              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4 text-balance">
                 Work orders that<br>actually close.
               </h3>
-              <p class="text-slate leading-relaxed mb-6">
+              <p class="text-slate leading-relaxed mb-6 text-pretty">
                 Reads work orders from your PMS, contacts residents and vendors, schedules appointments, and keeps everyone updated — without your team lifting a finger.
               </p>
               <div class="space-y-3">
@@ -671,8 +714,8 @@
             </div>
 
             <!-- UI Card -->
-            <div class="lg:order-2 rounded-3xl p-6 sm:p-8" style="background: linear-gradient(145deg, #FEF3C7 0%, #FDE68A 50%, #FCD34D40 100%);">
-              <div class="bg-white rounded-2xl shadow-lg shadow-amber-500/5 p-5 sm:p-6">
+            <div class="lg:order-2 rounded-[28px] p-8 sm:p-10 lg:p-12" style="background: #FEF3E2;">
+              <div class="bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] p-5 sm:p-6">
                 <!-- Work order header -->
                 <div class="flex items-center justify-between mb-5">
                   <div class="flex items-center gap-3">
@@ -722,7 +765,7 @@
                   </div>
                   <div class="flex-shrink-0 w-8 h-0.5 bg-amber-400 -mt-4"></div>
                   <div class="flex-1 text-center">
-                    <div class="w-7 h-7 rounded-full bg-amber-500 ring-4 ring-amber-100 text-white flex items-center justify-center mx-auto mb-1.5">
+                    <div class="w-7 h-7 rounded-full bg-amber-500 ring-4 ring-amber-200/50 text-white flex items-center justify-center mx-auto mb-1.5">
                       <div class="w-2 h-2 rounded-full bg-white"></div>
                     </div>
                     <span class="text-[10px] text-amber-700 font-bold">Scheduled</span>
@@ -740,8 +783,8 @@
           <!-- Row 3: Card LEFT, Text RIGHT -->
           <div class="reveal grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
             <!-- UI Card -->
-            <div class="rounded-3xl p-6 sm:p-8" style="background: linear-gradient(145deg, #F0F4F3 0%, #E2E8E6 50%, #D1D9D640 100%);">
-              <div class="bg-white rounded-2xl shadow-lg shadow-slate/5 p-5 sm:p-6">
+            <div class="rounded-[28px] p-8 sm:p-10 lg:p-12" style="background: #E8F5F0;">
+              <div class="bg-white rounded-2xl shadow-[0_2px_20px_rgba(0,0,0,0.06)] p-5 sm:p-6">
                 <!-- Lead thread header -->
                 <div class="flex items-center justify-between mb-5">
                   <div class="flex items-center gap-3">
@@ -786,14 +829,14 @@
 
             <!-- Text -->
             <div>
-              <span class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold tracking-wide uppercase mb-5">
+              <span class="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold tracking-wide uppercase mb-6">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9L12 2L21 9V20C21 20.55 20.55 21 20 21H4C3.45 21 3 20.55 3 20V9Z"/><path d="M9 21V12H15V21"/></svg>
                 Leasing Agent
               </span>
-              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4">
+              <h3 class="text-2xl sm:text-3xl text-midnight font-bold leading-tight mb-4 text-balance">
                 Every lead gets<br>a personal reply.
               </h3>
-              <p class="text-slate leading-relaxed mb-6">
+              <p class="text-slate leading-relaxed mb-6 text-pretty">
                 Responds to every inquiry in under 60 seconds — answering questions, sharing availability, and booking tours. Your pipeline stays warm while your team focuses on closings.
               </p>
               <div class="space-y-3">
@@ -819,584 +862,413 @@
 
     <hr class="section-divider max-w-7xl mx-auto" />
 
-    <!-- ===================== HOW IT WORKS ===================== -->
+    <!-- ===================== PLATFORM OVERVIEW ===================== -->
     <section id="how-it-works" class="py-24 sm:py-32 relative">
       <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="max-w-2xl mx-auto text-center mb-16">
-          <p
-            class="reveal text-xs uppercase tracking-widest text-emerald-600 mb-4 font-semibold"
-          >
-            How It Works
-          </p>
-          <h2
-            class="reveal reveal-delay-1 text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance"
-          >
-            Live in days, not months.
+        <!-- Header -->
+        <div class="max-w-2xl mb-16 reveal">
+          <p class="text-xs uppercase tracking-widest text-violet-600 mb-4 font-semibold">Platform Overview</p>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance">
+            One platform.<br>Every workflow covered.
           </h2>
-          <p class="reveal reveal-delay-2 text-lg text-slate leading-relaxed">
-            Haven layers on top of your existing stack. No data migration, no
-            retraining your team, no ripping out what already works.
+          <p class="text-lg text-slate leading-relaxed text-pretty">
+            Haven is a suite of AI agents that plug directly into your property management software, follow your SOPs, and work across every channel — so nothing falls through the cracks.
           </p>
         </div>
 
-        <div class="grid md:grid-cols-3 gap-8 lg:gap-12">
-          <!-- Step 1 -->
-          <div class="reveal reveal-delay-1 relative">
-            <div class="flex items-center gap-4 mb-6">
-              <div
-                class="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 text-sm font-bold shrink-0"
-              >
-                01
+        <!-- Tabbed UI Showcase -->
+        <div class="reveal">
+          <!-- UI Preview Area -->
+          <div class="rounded-t-[24px] border border-b-0 border-surface-lighter bg-white p-6 sm:p-8 lg:p-10 min-h-[360px] sm:min-h-[420px] relative overflow-hidden">
+
+            <!-- Tab 0: Shared Context — Activity Timeline -->
+            <div id="platform-panel-0" class="platform-panel">
+              <div class="max-w-2xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-violet-100 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
+                    </div>
+                    <span class="text-sm font-semibold text-midnight">Shared Activity Feed</span>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-600 text-[11px] font-semibold">
+                    <span class="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    Live
+                  </span>
+                </div>
+                <div class="space-y-3">
+                  <!-- Entry 1 -->
+                  <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-lg bg-violet-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5" stroke-linecap="round"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Receptionist</span>
+                        <span class="text-[10px] text-slate">Just now</span>
+                      </div>
+                      <p class="text-xs text-slate-light leading-relaxed">Inbound call from Maria Chen re: Unit 4B — water leak in kitchen. Flagged urgent, created work order <span class="font-semibold text-midnight">#1847</span>, routed to maintenance.</p>
+                    </div>
+                  </div>
+                  <!-- Entry 2 -->
+                  <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-lg bg-amber-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Maintenance</span>
+                        <span class="text-[10px] text-slate">2 min ago</span>
+                      </div>
+                      <p class="text-xs text-slate-light leading-relaxed">Picked up WO <span class="font-semibold text-midnight">#1847</span>. Dispatched Ace Plumbing, confirmed appointment Thu 2:00 PM. SMS sent to tenant with ETA.</p>
+                    </div>
+                  </div>
+                  <!-- Entry 3 -->
+                  <div class="flex items-start gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center shrink-0 mt-0.5">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9L12 2L21 9V20C21 20.55 20.55 21 20 21H4C3.45 21 3 20.55 3 20V9Z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center justify-between mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Leasing</span>
+                        <span class="text-[10px] text-slate">5 min ago</span>
+                      </div>
+                      <p class="text-xs text-slate-light leading-relaxed">New lead: Priya Patel inquiring about 2BR availability. Replied in 48s, answered pet policy question, booked tour for Friday 11 AM.</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div
-                class="hidden md:block h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"
-              ></div>
             </div>
-            <h3 class="text-xl text-midnight mb-3 font-semibold">
-              Connect your PMS
-            </h3>
-            <p class="text-slate leading-relaxed">
-              We plug into Yardi, AppFolio, Entrata, RealPage, and more via
-              secure API. Your data stays where it is — Haven reads and writes
-              in place.
-            </p>
+
+            <!-- Tab 1: Every Channel — Multichannel Inbox -->
+            <div id="platform-panel-1" class="platform-panel hidden">
+              <div class="max-w-2xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-blue-100 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                    </div>
+                    <span class="text-sm font-semibold text-midnight">Unified Inbox</span>
+                  </div>
+                  <div class="flex items-center gap-1.5">
+                    <span class="px-2 py-0.5 rounded-full bg-blue-50 text-blue-600 text-[10px] font-semibold">12 active</span>
+                  </div>
+                </div>
+                <div class="space-y-2.5">
+                  <!-- Voice -->
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-full bg-violet-100 flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">James Rivera</span>
+                        <span class="px-1.5 py-0.5 rounded bg-violet-50 text-violet-600 text-[9px] font-bold uppercase">Voice</span>
+                      </div>
+                      <p class="text-[11px] text-slate truncate">"Hi, I'm calling about the heating in my unit..."</p>
+                    </div>
+                    <span class="text-[10px] text-slate shrink-0">3m ago</span>
+                  </div>
+                  <!-- SMS -->
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Maria Chen</span>
+                        <span class="px-1.5 py-0.5 rounded bg-emerald-50 text-emerald-600 text-[9px] font-bold uppercase">SMS</span>
+                      </div>
+                      <p class="text-[11px] text-slate truncate">"Thanks for the update! Will someone be there between 2-4?"</p>
+                    </div>
+                    <span class="text-[10px] text-slate shrink-0">8m ago</span>
+                  </div>
+                  <!-- Email -->
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M22 7l-10 7L2 7"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">Priya Patel</span>
+                        <span class="px-1.5 py-0.5 rounded bg-blue-50 text-blue-600 text-[9px] font-bold uppercase">Email</span>
+                      </div>
+                      <p class="text-[11px] text-slate truncate">Re: Tour Confirmation — "Looking forward to Friday! Quick question about parking..."</p>
+                    </div>
+                    <span class="text-[10px] text-slate shrink-0">22m ago</span>
+                  </div>
+                  <!-- Web -->
+                  <div class="flex items-center gap-3 p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center shrink-0">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M2 12h20"/></svg>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                      <div class="flex items-center gap-2 mb-0.5">
+                        <span class="text-xs font-semibold text-midnight">David Park</span>
+                        <span class="px-1.5 py-0.5 rounded bg-amber-50 text-amber-700 text-[9px] font-bold uppercase">Web</span>
+                      </div>
+                      <p class="text-[11px] text-slate truncate">"What's the pet deposit for a dog under 50 lbs?"</p>
+                    </div>
+                    <span class="text-[10px] text-slate shrink-0">34m ago</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 2: SOPs — Rules Config -->
+            <div id="platform-panel-2" class="platform-panel hidden">
+              <div class="max-w-2xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-amber-100 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+                    </div>
+                    <span class="text-sm font-semibold text-midnight">SOP Configuration</span>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-amber-50 text-amber-700 text-[11px] font-semibold">4 rules active</span>
+                </div>
+                <div class="space-y-2.5">
+                  <!-- Rule 1 -->
+                  <div class="p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-red-400"></div>
+                        <span class="text-xs font-semibold text-midnight">Emergency Escalation</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">Active</span>
+                    </div>
+                    <p class="text-[11px] text-slate leading-relaxed">If issue contains <span class="px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-mono text-[10px]">flood</span> <span class="px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-mono text-[10px]">fire</span> <span class="px-1.5 py-0.5 rounded bg-red-50 text-red-600 font-mono text-[10px]">gas leak</span> → Immediately call on-site manager + notify property owner</p>
+                  </div>
+                  <!-- Rule 2 -->
+                  <div class="p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-amber-400"></div>
+                        <span class="text-xs font-semibold text-midnight">After-Hours Routing</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">Active</span>
+                    </div>
+                    <p class="text-[11px] text-slate leading-relaxed">Between <span class="font-semibold text-midnight">6 PM–8 AM</span>: Log all non-urgent calls, send summary to team at 8 AM. Urgent calls → escalate per emergency rule.</p>
+                  </div>
+                  <!-- Rule 3 -->
+                  <div class="p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-blue-400"></div>
+                        <span class="text-xs font-semibold text-midnight">Lead Response SLA</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">Active</span>
+                    </div>
+                    <p class="text-[11px] text-slate leading-relaxed">Respond to all new leads within <span class="font-semibold text-midnight">60 seconds</span>. If no AI reply after 2 min → alert leasing team via SMS.</p>
+                  </div>
+                  <!-- Rule 4 -->
+                  <div class="p-3.5 rounded-xl bg-surface-light/50 border border-surface-lighter/60">
+                    <div class="flex items-center justify-between mb-2">
+                      <div class="flex items-center gap-2">
+                        <div class="w-2 h-2 rounded-full bg-violet-400"></div>
+                        <span class="text-xs font-semibold text-midnight">Vendor Spend Approval</span>
+                      </div>
+                      <span class="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-600 text-[10px] font-semibold">Active</span>
+                    </div>
+                    <p class="text-[11px] text-slate leading-relaxed">Work orders over <span class="font-semibold text-midnight">$500</span> require manager approval before vendor dispatch. Under $500 → auto-dispatch.</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Tab 3: Human-in-the-Loop — Handoff -->
+            <div id="platform-panel-3" class="platform-panel hidden">
+              <div class="max-w-2xl mx-auto">
+                <div class="flex items-center justify-between mb-6">
+                  <div class="flex items-center gap-2.5">
+                    <div class="w-7 h-7 rounded-lg bg-emerald-100 flex items-center justify-center">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+                    </div>
+                    <span class="text-sm font-semibold text-midnight">Escalation Handoff</span>
+                  </div>
+                  <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-rose-50 text-rose-600 text-[11px] font-semibold">Needs Review</span>
+                </div>
+                <!-- Handoff card -->
+                <div class="rounded-xl border-2 border-rose-200 bg-rose-50/30 p-5 mb-4">
+                  <div class="flex items-start gap-3 mb-4">
+                    <div class="w-9 h-9 rounded-full bg-rose-100 flex items-center justify-center shrink-0">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#E11D48" stroke-width="1.5"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+                    </div>
+                    <div>
+                      <p class="text-sm font-semibold text-midnight mb-1">Tenant requesting lease break — needs human judgment</p>
+                      <p class="text-xs text-slate leading-relaxed">Unit 8C tenant David Park is requesting an early lease termination due to job relocation. Lease has 7 months remaining. This requires manager review per your SOP.</p>
+                    </div>
+                  </div>
+                  <div class="border-t border-rose-200 pt-3">
+                    <p class="text-[10px] uppercase tracking-widest text-slate font-semibold mb-2">Context provided</p>
+                    <div class="grid grid-cols-2 gap-2">
+                      <div class="px-3 py-2 rounded-lg bg-white text-[11px]">
+                        <span class="text-slate">Tenant since</span>
+                        <span class="block text-midnight font-semibold">March 2024</span>
+                      </div>
+                      <div class="px-3 py-2 rounded-lg bg-white text-[11px]">
+                        <span class="text-slate">Rent status</span>
+                        <span class="block text-emerald-600 font-semibold">Always on time</span>
+                      </div>
+                      <div class="px-3 py-2 rounded-lg bg-white text-[11px]">
+                        <span class="text-slate">Remaining lease</span>
+                        <span class="block text-midnight font-semibold">7 months</span>
+                      </div>
+                      <div class="px-3 py-2 rounded-lg bg-white text-[11px]">
+                        <span class="text-slate">Early term. fee</span>
+                        <span class="block text-midnight font-semibold">2 months rent</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flex items-center gap-3">
+                  <div class="flex-1 h-px bg-surface-lighter"></div>
+                  <div class="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-light border border-surface-lighter">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="2" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+                    <span class="text-[10px] font-semibold text-slate-light">Handed off to Sarah R. — Property Manager</span>
+                  </div>
+                  <div class="flex-1 h-px bg-surface-lighter"></div>
+                </div>
+              </div>
+            </div>
+
           </div>
 
-          <!-- Step 2 -->
-          <div class="reveal reveal-delay-2 relative">
-            <div class="flex items-center gap-4 mb-6">
-              <div
-                class="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 text-sm font-bold shrink-0"
-              >
-                02
-              </div>
-              <div
-                class="hidden md:block h-px flex-1 bg-gradient-to-r from-emerald-200 to-transparent"
-              ></div>
-            </div>
-            <h3 class="text-xl text-midnight mb-3 font-semibold">
-              Configure your SOPs
-            </h3>
-            <p class="text-slate leading-relaxed">
-              Define your escalation rules, SLAs, greeting scripts, and routing
-              logic. Haven follows your playbook — not a one-size-fits-all
-              template.
-            </p>
-          </div>
+          <!-- Tab Selector Row -->
+          <div class="grid grid-cols-2 lg:grid-cols-4 border border-surface-lighter rounded-b-[24px] overflow-hidden bg-white">
 
-          <!-- Step 3 -->
-          <div class="reveal reveal-delay-3 relative">
-            <div class="flex items-center gap-4 mb-6">
-              <div
-                class="w-10 h-10 rounded-full bg-emerald-50 border border-emerald-200 flex items-center justify-center text-emerald-600 text-sm font-bold shrink-0"
-              >
-                03
+            <!-- Tab 0 -->
+            <button onclick="switchPlatformTab(0)" id="platform-tab-0" class="platform-tab platform-tab-active text-left p-5 sm:p-6 border-r border-surface-lighter/60 relative transition-colors duration-300 hover:bg-surface-light/30">
+              <div class="absolute top-0 left-0 w-full h-[3px] platform-tab-bar bg-violet-500"></div>
+              <div class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#7C3AED" stroke-width="1.5"><path d="M12 20V10M18 20V4M6 20v-4"/></svg>
               </div>
-            </div>
-            <h3 class="text-xl text-midnight mb-3 font-semibold">Go live</h3>
-            <p class="text-slate leading-relaxed">
-              Turn agents on property by property. Monitor performance in real
-              time. Your team keeps full control — Haven handles the legwork,
-              humans make the calls.
-            </p>
+              <h4 class="text-sm font-bold text-midnight mb-1">Agents that share context</h4>
+              <p class="text-[11px] text-slate leading-relaxed">Information moves with the workflow, not stuck in silos.</p>
+            </button>
+
+            <!-- Tab 1 -->
+            <button onclick="switchPlatformTab(1)" id="platform-tab-1" class="platform-tab text-left p-5 sm:p-6 border-r border-surface-lighter/60 relative transition-colors duration-300 hover:bg-surface-light/30">
+              <div class="absolute top-0 left-0 w-full h-[3px] platform-tab-bar bg-blue-500"></div>
+              <div class="w-8 h-8 rounded-lg bg-blue-50 flex items-center justify-center mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#2563EB" stroke-width="1.5"><path d="M22 16.92V19.92C22 20.48 21.56 20.93 21 20.97C20.66 20.99 20.33 21 20 21C10.61 21 3 13.39 3 4"/><path d="M15 2h6v6"/></svg>
+              </div>
+              <h4 class="text-sm font-bold text-midnight mb-1">Every channel</h4>
+              <p class="text-[11px] text-slate leading-relaxed">Voice, SMS, email, and web — all in one place.</p>
+            </button>
+
+            <!-- Tab 2 -->
+            <button onclick="switchPlatformTab(2)" id="platform-tab-2" class="platform-tab text-left p-5 sm:p-6 border-r border-surface-lighter/60 relative transition-colors duration-300 hover:bg-surface-light/30 border-t lg:border-t-0 border-surface-lighter/60">
+              <div class="absolute top-0 left-0 w-full h-[3px] platform-tab-bar bg-amber-500"></div>
+              <div class="w-8 h-8 rounded-lg bg-amber-50 flex items-center justify-center mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="1.5"><path d="M9 5H7a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"/><rect x="9" y="3" width="6" height="4" rx="1"/></svg>
+              </div>
+              <h4 class="text-sm font-bold text-midnight mb-1">Your SOPs</h4>
+              <p class="text-[11px] text-slate leading-relaxed">Your rules, SLAs, and escalation paths — enforced.</p>
+            </button>
+
+            <!-- Tab 3 -->
+            <button onclick="switchPlatformTab(3)" id="platform-tab-3" class="platform-tab text-left p-5 sm:p-6 relative transition-colors duration-300 hover:bg-surface-light/30 border-t lg:border-t-0 border-surface-lighter/60">
+              <div class="absolute top-0 left-0 w-full h-[3px] platform-tab-bar bg-emerald-500"></div>
+              <div class="w-8 h-8 rounded-lg bg-emerald-50 flex items-center justify-center mb-3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M20 21a8 8 0 0 0-16 0"/></svg>
+              </div>
+              <h4 class="text-sm font-bold text-midnight mb-1">Human-in-the-loop</h4>
+              <p class="text-[11px] text-slate leading-relaxed">AI handles legwork, humans handle judgment.</p>
+            </button>
+
           </div>
         </div>
 
-        <!-- Architecture visual -->
-        <div
-          class="reveal mt-20 p-8 sm:p-12 rounded-2xl bg-surface border border-surface-lighter relative overflow-hidden"
-        >
-          <div
-            class="absolute inset-0 opacity-[0.03]"
-            style="
-              background-image:
-                linear-gradient(rgba(0, 0, 0, 0.15) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 0, 0, 0.15) 1px, transparent 1px);
-              background-size: 40px 40px;
-            "
-          ></div>
-          <div
-            class="relative flex flex-col lg:flex-row items-center justify-between gap-8"
-          >
-            <!-- Your Tools -->
-            <div class="text-center lg:text-left">
-              <p
-                class="text-xs uppercase tracking-widest text-slate mb-4 font-semibold"
-              >
-                Your Existing Stack
-              </p>
-              <div class="flex flex-wrap gap-2 justify-center lg:justify-start">
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >PMS</span
-                >
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >CRM</span
-                >
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >Phone</span
-                >
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >Email</span
-                >
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >Calendar</span
-                >
-              </div>
-            </div>
-
-            <!-- Arrow -->
-            <div class="flex flex-col items-center gap-2 shrink-0">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                class="hidden lg:block"
-              >
-                <path
-                  d="M8 20H32M32 20L24 12M32 20L24 28"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                class="lg:hidden"
-              >
-                <path
-                  d="M20 8V32M20 32L12 24M20 32L28 24"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <span class="text-xs text-slate font-medium">Secure API</span>
-            </div>
-
-            <!-- Haven -->
-            <div
-              class="text-center px-8 py-6 rounded-xl bg-violet-50 border border-violet-200"
-            >
-              <div
-                class="w-10 h-10 rounded-lg bg-violet-100 flex items-center justify-center mx-auto mb-3"
-              >
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-                  <path
-                    d="M10 2.5L17.5 6.875V13.125L10 17.5L2.5 13.125V6.875L10 2.5Z"
-                    stroke="#7C3AED"
-                    stroke-width="1.25"
-                    stroke-linejoin="round"
-                  />
-                </svg>
-              </div>
-              <p class="text-lg text-midnight mb-1 font-semibold">Haven</p>
-              <p class="text-xs text-violet-600 font-medium">
-                Intelligence Layer
-              </p>
-            </div>
-
-            <!-- Arrow -->
-            <div class="flex flex-col items-center gap-2 shrink-0">
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                class="hidden lg:block"
-              >
-                <path
-                  d="M8 20H32M32 20L24 12M32 20L24 28"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <svg
-                width="40"
-                height="40"
-                viewBox="0 0 40 40"
-                fill="none"
-                class="lg:hidden"
-              >
-                <path
-                  d="M20 8V32M20 32L12 24M20 32L28 24"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-              <span class="text-xs text-slate font-medium">Multi-channel</span>
-            </div>
-
-            <!-- Channels -->
-            <div class="text-center lg:text-right">
-              <p
-                class="text-xs uppercase tracking-widest text-slate mb-4 font-semibold"
-              >
-                Every Channel
-              </p>
-              <div class="flex flex-wrap gap-2 justify-center lg:justify-end">
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >Voice</span
-                >
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >SMS</span
-                >
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >Email</span
-                >
-                <span
-                  class="px-3 py-1.5 rounded-lg bg-white border border-surface-lighter text-sm text-slate-light"
-                  >Web Chat</span
-                >
-              </div>
-            </div>
-          </div>
-        </div>
       </div>
     </section>
-
-    <!-- ===================== INTEGRATIONS ===================== -->
-    <section id="integrations" class="py-24 sm:py-32 relative">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="max-w-3xl mx-auto text-center mb-16">
-          <p
-            class="reveal text-xs uppercase tracking-widest text-blue-600 mb-4 font-semibold"
-          >
-            Integrations
-          </p>
-          <h2
-            class="reveal reveal-delay-1 text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance"
-          >
-            No new system of record.
-          </h2>
-          <p class="reveal reveal-delay-2 text-lg text-slate leading-relaxed">
-            Haven reads and writes directly in your PMS. Your team keeps using
-            the tools they already know. We're the intelligence layer, not the
-            replacement.
-          </p>
-        </div>
-
-        <!-- PMS Logos Grid -->
-        <div
-          class="reveal reveal-delay-2 grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4"
-        >
-          <div
-            class="h-20 rounded-xl bg-white border border-surface-lighter flex items-center justify-center hover:border-slate transition-colors duration-500 shadow-sm"
-          >
-            <span class="text-sm font-semibold text-slate/50">Yardi</span>
-          </div>
-          <div
-            class="h-20 rounded-xl bg-white border border-surface-lighter flex items-center justify-center hover:border-slate transition-colors duration-500 shadow-sm"
-          >
-            <span class="text-sm font-semibold text-slate/50">AppFolio</span>
-          </div>
-          <div
-            class="h-20 rounded-xl bg-white border border-surface-lighter flex items-center justify-center hover:border-slate transition-colors duration-500 shadow-sm"
-          >
-            <span class="text-sm font-semibold text-slate/50">Entrata</span>
-          </div>
-          <div
-            class="h-20 rounded-xl bg-white border border-surface-lighter flex items-center justify-center hover:border-slate transition-colors duration-500 shadow-sm"
-          >
-            <span class="text-sm font-semibold text-slate/50">RealPage</span>
-          </div>
-          <div
-            class="h-20 rounded-xl bg-white border border-surface-lighter flex items-center justify-center hover:border-slate transition-colors duration-500 shadow-sm"
-          >
-            <span class="text-sm font-semibold text-slate/50">Buildium</span>
-          </div>
-          <div
-            class="h-20 rounded-xl bg-white border border-surface-lighter flex items-center justify-center hover:border-slate transition-colors duration-500 shadow-sm"
-          >
-            <span class="text-sm font-semibold text-slate/50">ResMan</span>
-          </div>
-        </div>
-
-        <!-- Principles grid -->
-        <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mt-12">
-          <div
-            class="reveal reveal-delay-1 p-6 rounded-xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <div
-              class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center mb-4"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <path
-                  d="M8 1V15M1 8H15"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </div>
-            <h4 class="text-lg text-midnight mb-2 font-semibold">
-              Additive, not disruptive
-            </h4>
-            <p class="text-sm text-slate leading-relaxed">
-              Haven adds capability without changing workflows. Your team's
-              muscle memory stays intact.
-            </p>
-          </div>
-
-          <div
-            class="reveal reveal-delay-2 p-6 rounded-xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <div
-              class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center mb-4"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <rect
-                  x="2"
-                  y="2"
-                  width="12"
-                  height="12"
-                  rx="2"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                />
-                <path
-                  d="M5 8L7 10L11 6"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                />
-              </svg>
-            </div>
-            <h4 class="text-lg text-midnight mb-2 font-semibold">
-              Your rules, enforced
-            </h4>
-            <p class="text-sm text-slate leading-relaxed">
-              SOPs, escalation chains, SLAs, and brand voice — Haven follows
-              your playbook to the letter.
-            </p>
-          </div>
-
-          <div
-            class="reveal reveal-delay-3 p-6 rounded-xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <div
-              class="w-8 h-8 rounded-lg bg-violet-50 flex items-center justify-center mb-4"
-            >
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
-                <circle
-                  cx="8"
-                  cy="5"
-                  r="3"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                />
-                <path
-                  d="M2 14C2 11.24 4.69 9 8 9C11.31 9 14 11.24 14 14"
-                  stroke="#7C3AED"
-                  stroke-width="1.5"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </div>
-            <h4 class="text-lg text-midnight mb-2 font-semibold">
-              Human-in-the-loop
-            </h4>
-            <p class="text-sm text-slate leading-relaxed">
-              AI handles the legwork. Humans handle judgment calls. Every
-              handoff includes clean notes and full context.
-            </p>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <hr class="section-divider max-w-7xl mx-auto" />
 
     <!-- ===================== RESULTS ===================== -->
     <section id="results" class="py-24 sm:py-32 relative">
       <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="max-w-2xl mx-auto text-center mb-16">
-          <p
-            class="reveal text-xs uppercase tracking-widest text-rose-500 mb-4 font-semibold"
-          >
-            Results
-          </p>
-          <h2
-            class="reveal reveal-delay-1 text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance"
-          >
-            The numbers speak.
+
+        <!-- Header -->
+        <div class="max-w-2xl mb-16 reveal">
+          <p class="text-xs uppercase tracking-widest text-rose-500 mb-4 font-semibold">Results</p>
+          <h2 class="text-3xl sm:text-4xl lg:text-5xl text-midnight leading-tight mb-6 font-bold text-balance">
+            Proven results with teams like yours.
           </h2>
         </div>
 
-        <!-- Metrics -->
-        <div class="reveal grid sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-20">
-          <div
-            class="text-center p-8 rounded-2xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <p
-              class="text-4xl lg:text-5xl text-midnight mb-2 font-bold"
-              data-count="99.2"
-              data-suffix="%"
-            >
-              99.2%
-            </p>
-            <p class="text-sm text-slate">calls answered</p>
+        <!-- Metrics Row -->
+        <div class="reveal grid grid-cols-2 lg:grid-cols-4 gap-4 mb-20">
+          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+            <p class="text-3xl sm:text-4xl text-midnight font-bold mb-1">+40%</p>
+            <p class="text-sm text-slate leading-relaxed text-pretty">Increase in after-hours call capture.</p>
           </div>
-          <div
-            class="text-center p-8 rounded-2xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <p
-              class="text-4xl lg:text-5xl text-midnight mb-2 font-bold"
-              data-count="3.1"
-              data-suffix="x"
-            >
-              3.1x
-            </p>
-            <p class="text-sm text-slate">lead-to-tour conversion</p>
+          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+            <p class="text-3xl sm:text-4xl text-midnight font-bold mb-1">3x faster</p>
+            <p class="text-sm text-slate leading-relaxed text-pretty">Time-to-contact for new leasing leads.</p>
           </div>
-          <div
-            class="text-center p-8 rounded-2xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <p
-              class="text-4xl lg:text-5xl text-midnight mb-2 font-bold"
-              data-count="40"
-              data-suffix="%"
-            >
-              40%
-            </p>
-            <p class="text-sm text-slate">faster work order resolution</p>
+          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+            <p class="text-3xl sm:text-4xl text-midnight font-bold mb-1">–30%</p>
+            <p class="text-sm text-slate leading-relaxed text-pretty">Reduction in time-to-schedule maintenance work orders.</p>
           </div>
-          <div
-            class="text-center p-8 rounded-2xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <p
-              class="text-4xl lg:text-5xl text-midnight mb-2 font-bold"
-              data-count="12"
-              data-suffix="hrs"
-            >
-              12hrs
-            </p>
-            <p class="text-sm text-slate">saved per property per week</p>
+          <div class="p-6 sm:p-8 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_12px_rgba(0,0,0,0.04)]">
+            <p class="text-3xl sm:text-4xl text-midnight font-bold mb-1">24/7</p>
+            <p class="text-sm text-slate leading-relaxed text-pretty">Coverage without adding headcount or burning out your team.</p>
           </div>
         </div>
 
         <!-- Testimonials -->
-        <div class="grid md:grid-cols-2 gap-4">
-          <div
-            class="reveal reveal-delay-1 p-8 rounded-2xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <div class="flex items-center gap-1 mb-6">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
+        <div class="reveal">
+          <!-- Featured Quote -->
+          <div class="rounded-[28px] p-8 sm:p-10 lg:p-12 mb-4" style="background: #F0ECFE;">
+            <div id="testimonial-quote" class="max-w-3xl">
+              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" class="mb-6 opacity-20">
+                <path d="M12.8 16H8C8 11.6 11.6 8 16 8V11.2C13.4 11.2 11.2 13.4 11.2 16H12.8C14.1 16 15.2 17.1 15.2 18.4V22.4C15.2 23.7 14.1 24.8 12.8 24.8H8.8C7.5 24.8 6.4 23.7 6.4 22.4V16H12.8ZM25.6 16H20.8C20.8 11.6 24.4 8 28.8 8V11.2C26.2 11.2 24 13.4 24 16H25.6C26.9 16 28 17.1 28 18.4V22.4C28 23.7 26.9 24.8 25.6 24.8H21.6C20.3 24.8 19.2 23.7 19.2 22.4V16H25.6Z" fill="#7C3AED"/>
               </svg>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-            </div>
-            <blockquote
-              class="text-lg text-slate-light leading-relaxed mb-6 italic"
-            >
-              "We went from missing 40% of after-hours calls to missing zero.
-              Haven's receptionist handles the noise so my team can focus on the
-              work that actually needs a human brain."
-            </blockquote>
-            <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-sm font-semibold text-violet-600"
-              >
-                SR
-              </div>
-              <div>
-                <p class="text-sm text-midnight font-medium">Sarah Rodriguez</p>
-                <p class="text-xs text-slate">VP of Operations, 2,400 units</p>
+              <blockquote id="testimonial-text" class="text-xl sm:text-2xl text-midnight leading-relaxed mb-8 font-medium text-pretty" style="min-height: 80px;">
+                "We went from missing 40% of after-hours calls to missing zero. Haven's receptionist handles the noise so my team can focus on the work that actually needs a human brain."
+              </blockquote>
+              <div id="testimonial-author" class="flex items-center gap-4">
+                <img id="testimonial-img" src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=96&h=96&fit=crop&crop=face" alt="Sarah Rodriguez" class="w-12 h-12 rounded-full object-cover ring-2 ring-white shadow-sm">
+                <div>
+                  <p id="testimonial-name" class="text-sm text-midnight font-semibold">Sarah Rodriguez</p>
+                  <p id="testimonial-role" class="text-xs text-slate">VP of Operations, Oakridge Properties — 2,400 units</p>
+                </div>
               </div>
             </div>
           </div>
 
-          <div
-            class="reveal reveal-delay-2 p-8 rounded-2xl bg-white border border-surface-lighter shadow-sm"
-          >
-            <div class="flex items-center gap-1 mb-6">
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-              <svg width="16" height="16" viewBox="0 0 16 16" fill="#F59E0B">
-                <path
-                  d="M8 1l2.245 4.549 5.02.73-3.633 3.54.857 5L8 12.685 3.51 14.82l.858-5.001L.735 6.28l5.02-.73L8 1z"
-                />
-              </svg>
-            </div>
-            <blockquote
-              class="text-lg text-slate-light leading-relaxed mb-6 italic"
-            >
-              "Our leasing team was drowning in lead follow-up. Haven responds
-              in under a minute and books tours while we sleep. Occupancy is up
-              6 points since we turned it on."
-            </blockquote>
-            <div class="flex items-center gap-3">
-              <div
-                class="w-10 h-10 rounded-full bg-surface flex items-center justify-center text-sm font-semibold text-violet-600"
-              >
-                MK
+          <!-- Testimonial Selector -->
+          <div class="flex flex-wrap gap-2 sm:gap-3 justify-center">
+            <button onclick="switchTestimonial(0)" id="testimonial-btn-0" class="testimonial-btn testimonial-btn-active flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
+              <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=80&h=80&fit=crop&crop=face" alt="Sarah Rodriguez" class="w-10 h-10 rounded-full object-cover">
+              <div class="text-left hidden sm:block">
+                <p class="text-xs font-semibold text-midnight">Sarah Rodriguez</p>
+                <p class="text-[10px] text-slate">VP of Operations</p>
               </div>
-              <div>
-                <p class="text-sm text-midnight font-medium">Marcus Kim</p>
-                <p class="text-xs text-slate">
-                  Director of Leasing, 8,000 units
-                </p>
+            </button>
+            <button onclick="switchTestimonial(1)" id="testimonial-btn-1" class="testimonial-btn flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
+              <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop&crop=face" alt="Marcus Kim" class="w-10 h-10 rounded-full object-cover">
+              <div class="text-left hidden sm:block">
+                <p class="text-xs font-semibold text-midnight">Marcus Kim</p>
+                <p class="text-[10px] text-slate">Director of Leasing</p>
               </div>
-            </div>
+            </button>
+            <button onclick="switchTestimonial(2)" id="testimonial-btn-2" class="testimonial-btn flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
+              <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956?w=80&h=80&fit=crop&crop=face" alt="Aisha Thompson" class="w-10 h-10 rounded-full object-cover">
+              <div class="text-left hidden sm:block">
+                <p class="text-xs font-semibold text-midnight">Aisha Thompson</p>
+                <p class="text-[10px] text-slate">Regional Manager</p>
+              </div>
+            </button>
+            <button onclick="switchTestimonial(3)" id="testimonial-btn-3" class="testimonial-btn flex items-center gap-3 px-4 py-3 rounded-2xl bg-white border border-surface-lighter/60 shadow-[0_1px_8px_rgba(0,0,0,0.04)] transition-all duration-300 hover:shadow-[0_2px_16px_rgba(0,0,0,0.08)]">
+              <img src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face" alt="David Chen" class="w-10 h-10 rounded-full object-cover">
+              <div class="text-left hidden sm:block">
+                <p class="text-xs font-semibold text-midnight">David Chen</p>
+                <p class="text-[10px] text-slate">COO</p>
+              </div>
+            </button>
           </div>
         </div>
+
       </div>
     </section>
 
@@ -1517,9 +1389,9 @@
               </li>
               <li>
                 <a
-                  href="#integrations"
+                  href="#results"
                   class="text-sm text-slate-light hover:text-midnight transition-colors"
-                  >Integrations</a
+                  >Results
                 >
               </li>
             </ul>
@@ -1764,6 +1636,77 @@
           },
         });
       });
+
+      // ===================== TESTIMONIALS =====================
+      const testimonials = [
+        {
+          text: '"We went from missing 40% of after-hours calls to missing zero. Haven\'s receptionist handles the noise so my team can focus on the work that actually needs a human brain."',
+          name: 'Sarah Rodriguez',
+          role: 'VP of Operations, Oakridge Properties — 2,400 units',
+          img: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=96&h=96&fit=crop&crop=face',
+        },
+        {
+          text: '"Our leasing team was drowning in lead follow-up. Haven responds in under a minute and books tours while we sleep. Occupancy is up 6 points since we turned it on."',
+          name: 'Marcus Kim',
+          role: 'Director of Leasing, Summit Living — 8,000 units',
+          img: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=96&h=96&fit=crop&crop=face',
+        },
+        {
+          text: '"Maintenance used to be our biggest source of resident complaints. Since Haven started coordinating vendors and sending updates, our satisfaction scores are the highest they\'ve ever been."',
+          name: 'Aisha Thompson',
+          role: 'Regional Manager, Beacon Residential — 5,200 units',
+          img: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=96&h=96&fit=crop&crop=face',
+        },
+        {
+          text: '"I was skeptical about AI handling our calls. But Haven follows our exact escalation rules, and the handoffs to my team come with better notes than most of our own staff write."',
+          name: 'David Chen',
+          role: 'COO, Meridian Property Group — 12,000 units',
+          img: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=96&h=96&fit=crop&crop=face',
+        },
+      ];
+
+      function switchTestimonial(index) {
+        const t = testimonials[index];
+        const quoteEl = document.getElementById('testimonial-quote');
+        const textEl = document.getElementById('testimonial-text');
+        const nameEl = document.getElementById('testimonial-name');
+        const roleEl = document.getElementById('testimonial-role');
+        const imgEl = document.getElementById('testimonial-img');
+
+        // Animate
+        quoteEl.classList.remove('quote-animate');
+        quoteEl.offsetHeight;
+        quoteEl.classList.add('quote-animate');
+
+        textEl.textContent = t.text;
+        nameEl.textContent = t.name;
+        roleEl.textContent = t.role;
+        imgEl.src = t.img;
+        imgEl.alt = t.name;
+
+        // Update buttons
+        document.querySelectorAll('.testimonial-btn').forEach(b => b.classList.remove('testimonial-btn-active'));
+        document.getElementById('testimonial-btn-' + index).classList.add('testimonial-btn-active');
+      }
+
+      // ===================== PLATFORM TABS =====================
+      function switchPlatformTab(index) {
+        // Hide all panels
+        document.querySelectorAll('.platform-panel').forEach(p => p.classList.add('hidden'));
+        // Show target panel
+        const panel = document.getElementById('platform-panel-' + index);
+        if (panel) {
+          panel.classList.remove('hidden');
+          // Re-trigger animation
+          panel.style.animation = 'none';
+          panel.offsetHeight; // force reflow
+          panel.style.animation = '';
+        }
+        // Update tab states
+        document.querySelectorAll('.platform-tab').forEach(t => t.classList.remove('platform-tab-active'));
+        const tab = document.getElementById('platform-tab-' + index);
+        if (tab) tab.classList.add('platform-tab-active');
+      }
 
       // ===================== SNIPPET FEED =====================
       const snippetData = [
