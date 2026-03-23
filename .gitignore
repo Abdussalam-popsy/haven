@@ -4,5 +4,8 @@ assets/*.mp4
 # Backup of original dark-mode version
 old/
 
+# Dependencies
+node_modules/
+
 # OS files
 .DS_Store
