@@ -7,5 +7,13 @@ old/
 # Dependencies
 node_modules/
 
+# Build output
+dist/
+
+# Local design / update files
+haven.pen
+updates/
+
 # OS files
 .DS_Store
+.vercel
